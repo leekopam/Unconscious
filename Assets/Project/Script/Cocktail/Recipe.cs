@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 // 칵테일 레시피를 나타내는 클래스
 public class Recipe

@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 // 레시피에 필요한 재료와 그 양을 나타내는 클래스
 [System.Serializable] // Unity Inspector에서 표시 가능하게 함
 public class RecipeIngredient
@@ -16,4 +12,3 @@ public class RecipeIngredient
         this.amount = amount;
     }
 }
-

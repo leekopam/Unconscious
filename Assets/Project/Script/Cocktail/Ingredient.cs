@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 // 칵테일의 재료를 나타내는 클래스
 public class Ingredient
 {
@@ -24,4 +20,3 @@ public class Ingredient
         this.flavorIntensity = flavorIntensity;
     }
 }
-

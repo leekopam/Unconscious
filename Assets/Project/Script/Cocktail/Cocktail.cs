@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+
 // 완성된 칵테일을 나타내는 클래스
 public class Cocktail
 {
@@ -15,7 +16,7 @@ public class Cocktail
     public Cocktail(List<Ingredient> ingredients, Recipe.MixingMethod method)
     {
         CalculateProperties(ingredients, method); // 재료들의 특성을 계산하여 칵테일의 특성을 설정
-        Debug.Log("칵테일이 완성되었습니다.");
+        Debug.Log("칵테일이 완성되었습니다."); // 칵테일이 완성되었음을 로그로 출력
     }
 
     // 칵테일의 특성을 계산하는 private 메서드: 재료들의 특성을 합산하고 평균 내는 로직 구현 필요함.

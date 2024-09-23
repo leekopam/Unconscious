@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+
 // 칵테일의 재료와 특성을 관리하는 클래스
 public class Drink
 {
