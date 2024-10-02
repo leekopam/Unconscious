@@ -11,8 +11,13 @@ public class Drink
     // 재료를 추가하는 메서드
     public void AddIngredient(Dictionary<string, float> ingredient)
     {
-        ingredients.Add(ingredient); // 재료를 리스트에 추가
-        Debug.Log($"{ingredient["name"]}이(가) 잔에 추가되었습니다."); // 콘솔에 로그 출력
+        if(ingredient.Count < 6)
+        {
+            ingredients.Add(ingredient); // 재료를 리스트에 추가
+            Debug.Log($"{ingredient["name"]}이(가) 잔에 추가되었습니다."); // 콘솔에 로그 출력
+        }
+        else { Debug.Log("잔이 다 찼습니다."); }
+        
     }
 
     // 재료들의 특성을 계산하는 private 메서드

@@ -34,11 +34,15 @@ public class DrinkManager : MonoBehaviour
         {
             ingredient = new Dictionary<string, float>
             {
-                {"name", 0},  {"alcoholContent", 8}, {"sweetness", 0}, {"bitterness", 1} };  // Vodka 재료 정보 설정
+                {"name", 0},  {"alcoholContent", 8}, {"sweetness", 0}, {"bitterness", 1} 
+            };  // Vodka 재료 정보 설정
         }
         else if (ingredientName == "Whiskey")
         {
-            ingredient = new Dictionary<string, float> { { "name", 1 }, { "alcoholContent", 7 }, { "sweetness", 2 }, { "bitterness", 3 } };  // Whiskey 재료 정보 설정
+            ingredient = new Dictionary<string, float> 
+            { 
+                { "name", 1 }, { "alcoholContent", 7 }, { "sweetness", 2 }, { "bitterness", 3 } 
+            };  // Whiskey 재료 정보 설정
         }
         currentDrink.AddIngredient(ingredient);  // Drink 객체에 재료 추가
     }
