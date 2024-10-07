@@ -10,9 +10,8 @@ public class ToolTipWindow : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         if (tooltip != null)
         {
             tooltip.SetActive(true);
-            Debug.Log("마우스 들어옴");
+            
         }
-        
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -20,8 +19,9 @@ public class ToolTipWindow : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         if (tooltip != null)
         {
             tooltip.SetActive(false);
-            Debug.Log("마우스 나감");
+            
         }
-         
     }
 }
+
+
