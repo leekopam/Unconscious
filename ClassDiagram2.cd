@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Readme" Collapsed="true">
+    <Position X="5.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAQAAAAAAAAAAAAAAAAAAAQAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Assets\TutorialInfo\Scripts\Readme.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cocktail" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAECAAAAAAAAAAAAAEAAAAEAAAAgACAAAAAAAAEQAA=</HashCode>
+      <FileName>Assets\Unconscious\Script\Cocktail\Cocktail.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Drink" Collapsed="true">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAIAAAIAAAAAAAAAAAAAAAAAAIAAAAAAA=</HashCode>
+      <FileName>Assets\Unconscious\Script\Cocktail\Drink.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DrinkManager" Collapsed="true">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAKAACAAIgAAAAACAAAABAACAAAAAAAAABAAAAA=</HashCode>
+      <FileName>Assets\Unconscious\Script\Cocktail\DrinkManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ingredient" Collapsed="true">
+    <Position X="2.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAgAAAAAAEgACAAAAAAAAEQAA=</HashCode>
+      <FileName>Assets\Unconscious\Script\Cocktail\Ingredient.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Recipe" Collapsed="true">
+    <Position X="0.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAAAAAAAAIAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Unconscious\Script\Cocktail\Recipe.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RecipeIngredient" Collapsed="true">
+    <Position X="2.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Unconscious\Script\Cocktail\RecipeIngredient.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Shaker" Collapsed="true">
+    <Position X="4" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAAAAIAAAEAAAAAAAAAAAAAAAAAAAAABAAAA=</HashCode>
+      <FileName>Assets\Unconscious\Script\Cocktail\Shaker.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameManager" Collapsed="true">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAYAAAAAIAAAAAAAAAAAIAEAAAAJCCAAAAAA=</HashCode>
+      <FileName>Assets\Unconscious\Script\System\GameManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameStartSetUp" Collapsed="true">
+    <Position X="0.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Unconscious\Script\System\GameStartSetUp.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IngredientButton" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="4" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQAAAAAAAAAAAAAAAAgAAAAAAAAAQAAAAA=</HashCode>
+      <FileName>Assets\Unconscious\Script\System\IngredientButton.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="TooltipManager" Collapsed="true">
+    <Position X="5.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAABAAQAIAAAAAAAAAAAAAAAQAAABAAAAEA=</HashCode>
+      <FileName>Assets\Unconscious\Script\System\TooltipManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="맑은 고딕" Size="9" />
+</ClassDiagram>
