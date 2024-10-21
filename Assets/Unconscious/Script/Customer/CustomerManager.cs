@@ -6,12 +6,12 @@ using System.Collections.Generic;
 
 public class CustomerManager : MonoBehaviour
 {
-    [SerializeField] private List<GameObject> customerPrefabs;
-    [SerializeField] private Transform spawnPoint;
-    [SerializeField] private Transform targetPoint;
-    [SerializeField] private float moveUpDuration = 1f;
+    [SerializeField] private List<GameObject> customerPrefabs; //손님 프리팹으로 관리
+    [SerializeField] private Transform spawnPoint; //손님 처음 스폰장소
+    [SerializeField] private Transform targetPoint; //올라오는 지점
+    [SerializeField] private float moveUpDuration = 1f; //손님 올라오는 속도(낮을수록 빨라짐)
     [SerializeField] private GameObject dialoguePanel;
-    [SerializeField] private Text dialogueText;
+    [SerializeField] private Text dialogueText; //손님 대화 텍스트
     [SerializeField] private Button acceptButton;
     [SerializeField] private Button rejectButton;
 
