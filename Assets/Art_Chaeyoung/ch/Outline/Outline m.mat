@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Outline
+  m_Name: Outline m
   m_Shader: {fileID: -6465566751694194690, guid: f3749cd89c15bd448bd5329ab7a152e4,
     type: 3}
   m_Parent: {fileID: 0}
@@ -38,7 +38,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Outline_Thickness: 0.003
+    - _Outline_Thickness: 0.01
     - _QueueControl: 0
     - _QueueOffset: 0
     m_Colors:
