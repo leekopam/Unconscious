@@ -1842,6 +1842,8 @@ MonoBehaviour:
   customerPrefabs:
   - {fileID: 6079892181683106403, guid: f5825506fc699c64fbebb6bcf27ca8fc, type: 3}
   - {fileID: 6079892181683106403, guid: 6e28f5879ffef5740b1f5ad5ff913922, type: 3}
+  - {fileID: 6079892181683106403, guid: 344503abe9f027b4abb44a6c54916dd1, type: 3}
+  - {fileID: 6079892181683106403, guid: 572e193da87be604a85006b860435827, type: 3}
   spawnPoints:
   - {fileID: 186216289}
   - {fileID: 1824630772}
