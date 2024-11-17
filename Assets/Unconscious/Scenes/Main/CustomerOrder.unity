@@ -1853,8 +1853,8 @@ MonoBehaviour:
   - {fileID: 2007744856}
   - {fileID: 791038856}
   moveUpDuration: 2
-  orderTimeout: 4
-  spawnInterval: 2
+  orderTimeout: 99999
+  spawnInterval: 120
   dialoguePanel: {fileID: 1818453693}
   dialogueText: {fileID: 70329280}
   acceptButton: {fileID: 1013605095}
