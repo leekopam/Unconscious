@@ -1,29 +1,43 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode]
-public class UpdateShaderProperties : MonoBehaviour
+namespace MyProject.Shader
 {
-
-
-    // Update is called once per frame
-    void Update()
+    [ExecuteAlways] // ExecuteInEditMode 대신 ExecuteAlways 사용
+    public class UpdateShaderProperties : MonoBehaviour
     {
-        if (gameObject.transform.hasChanged)
+        private Transform cachedTransform;
+        private readonly string shaderName = "Shader Graphs/ToonRamp";
+        private readonly string lightDirProperty = "_LightDir";
+
+        private void Awake()
+        {
+            cachedTransform = transform;
+        }
+
+        private void Update()
+        {
+            if (cachedTransform.hasChanged)
+            {
+                UpdateShaderLightDirection();
+                cachedTransform.hasChanged = false;
+            }
+        }
+
+        private void UpdateShaderLightDirection()
         {
             Renderer[] renderers = GameObject.FindObjectsOfType<Renderer>();
-            foreach (var r in renderers)
+            foreach (var renderer in renderers)
             {
-                Material m;
+                Material material;
 #if UNITY_EDITOR
-                m = r.sharedMaterial;
+                material = renderer.sharedMaterial;
 #else
-				m = r.material;
+                material = renderer.material;
 #endif
-                if (string.Compare(strA: m.shader.name, strB: "Shader Graphs/ToonRamp") == 0)
+                if (material != null && material.shader != null &&
+                    string.Compare(material.shader.name, shaderName) == 0)
                 {
-                    m.SetVector(name: "_LightDir", transform.forward);
+                    material.SetVector(lightDirProperty, cachedTransform.forward);
                 }
             }
         }
