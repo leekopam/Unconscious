@@ -76,6 +76,7 @@ public class MakeCocktail : MonoBehaviour
             totalFlavorIntensity += alcohol.FlavorIntensity;
         }
 
+        /*
         // Æò±Õ°ª °è»ê
         float avgAlcoholContent = totalAlcoholContent / (float)alcoholStatuses.Count;
         float avgSweetness = totalSweetness / (float)alcoholStatuses.Count;
@@ -87,6 +88,7 @@ public class MakeCocktail : MonoBehaviour
                  $"Æò±Õ ´Ü¸À: {avgSweetness}\n" +
                  $"Æò±Õ ¾´¸À: {avgBitterness}\n" +
                  $"Æò±Õ Çâ ¼¼±â: {avgFlavorIntensity}");
+        */
     }
 
     // ¸®½ºÆ® ÃÊ±âÈ­
