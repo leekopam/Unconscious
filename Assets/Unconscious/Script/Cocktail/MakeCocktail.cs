@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using static AlcoholStatus;
 
 public class MakeCocktail : MonoBehaviour
 {
@@ -16,6 +15,16 @@ public class MakeCocktail : MonoBehaviour
     //현재 선택된 술 정보
     private List<AlcoholStatus> alcoholStatuses = new List<AlcoholStatus>();
 
+    int totalAlcoholContent = 0;
+    int totalSweetness = 0;
+    int totalBitterness = 0;
+    int totalFlavorIntensity = 0;
+
+    private RecipeBook recipeBook;
+    private void Awake()
+    {
+        recipeBook = new RecipeBook();
+    }
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.F1))
@@ -26,6 +35,7 @@ public class MakeCocktail : MonoBehaviour
         {
             ClearAlcoholList();
         }
+        
     }
 
     //선택한 술 정보를 받아옴
@@ -55,6 +65,8 @@ public class MakeCocktail : MonoBehaviour
         Debug.Log($"추가된 술: {name}, 도수: {alcoholContent}, 단맛: {sweetness}, 쓴맛: {bitterness}, 향의 종류: {flavorType}, 향의 세기: {flavorIntensity}");
     }
 
+    
+
     public void CalculateCoktail()
     {
         if(alcoholStatuses.Count == 0)
@@ -63,10 +75,27 @@ public class MakeCocktail : MonoBehaviour
             return;
         }
 
-        int totalAlcoholContent = 0;
-        int totalSweetness = 0;
-        int totalBitterness = 0;
-        int totalFlavorIntensity = 0;
+        if (alcoholStatuses.Count != 2)
+        {
+            Debug.Log("칵테일을 만들기 위해서는 정확히 두 가지 술이 필요합니다.");
+            return;
+        }
+
+        AlcoholStatus alcohol1 = alcoholStatuses[0];
+        AlcoholStatus alcohol2 = alcoholStatuses[1];
+
+        Recipe? result = recipeBook.Check_Cocktail_Recipe(
+       alcohol1.Name, alcohol1.AlcoholContent, alcohol1.Sweetness, alcohol1.Bitterness, alcohol1.Flavor, alcohol1.FlavorIntensity,
+       alcohol2.Name, alcohol2.AlcoholContent, alcohol2.Sweetness, alcohol2.Bitterness, alcohol2.Flavor, alcohol2.FlavorIntensity);
+
+        if (result.HasValue)
+        {
+            Debug.Log($"완성된 칵테일: {result.Value}");
+        }
+        else
+        {
+            Debug.Log("알려진 레시피가 없는 조합입니다.");
+        }
 
         foreach (var alcohol in alcoholStatuses)
         {
