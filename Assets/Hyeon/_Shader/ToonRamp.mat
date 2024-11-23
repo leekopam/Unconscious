@@ -37,6 +37,10 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _AlphaMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BaseMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -67,6 +71,7 @@ Material:
     - _QueueOffset: 0
     - _RimLight: 5
     - _RimLightRange: 0.9997
+    - _UseAlpha: 0
     - _UseTexture: 0
     m_Colors:
     - _BaseColor: {r: 0.5647059, g: 0.36078426, b: 0.18823525, a: 1}

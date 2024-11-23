@@ -67,13 +67,14 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _OutlineThickness: 0.5
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _RimLight: 5
-    - _RimLightRange: 0.65
+    - _RimLight: 15
+    - _RimLightRange: 0.847
     - _UseAlpha: 0
     - _UseTexture: 1
     m_Colors:
     - _BaseColor: {r: 0.5647059, g: 0.36078426, b: 0.18823525, a: 1}
-    - _LightDir: {r: -0.40655363, g: -0.9107115, b: 0.07293212, a: 0}
+    - _LightDir: {r: 0, g: -0.93347347, b: 0.35864645, a: 0}
   m_BuildTextureStacks: []
