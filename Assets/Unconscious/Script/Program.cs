@@ -16,6 +16,6 @@ public class Program : MonoBehaviour
 
     private void UpdateTimerText(float timeRemaining)
     {
-        timerText.text = $"남은 시간: {timeRemaining:F2}초"; // 타이머 값을 텍스트로 표시
+        //timerText.text = $"남은 시간: {timeRemaining:F2}초"; // 타이머 값을 텍스트로 표시
     }
 }
