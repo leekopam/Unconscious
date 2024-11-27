@@ -128,7 +128,8 @@ MonoBehaviour:
       PassNames: []
     overrideMaterial: {fileID: 2100000, guid: 3c9432f8035582643861b8a5fbc4bcdc, type: 2}
     overrideMaterialPassIndex: 0
-    overrideShader: {fileID: 0}
+    overrideShader: {fileID: -6465566751694194690, guid: f3749cd89c15bd448bd5329ab7a152e4,
+      type: 3}
     overrideShaderPassIndex: 0
     overrideMode: 1
     overrideDepthState: 1

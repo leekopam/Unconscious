@@ -8,10 +8,10 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - outline_s
+  - Outlined
   - Water
   - UI
-  - outline_m
+  - Highlights
   - 
   - 
   - 
@@ -36,7 +36,7 @@ TagManager:
   - 
   - 
   - 
-  - 1
+  - 
   m_SortingLayers:
   - name: Default
     uniqueID: 0
