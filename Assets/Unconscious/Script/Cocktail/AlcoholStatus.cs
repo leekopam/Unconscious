@@ -14,7 +14,7 @@ public class AlcoholStatus : MonoBehaviour
     private void Start()
     {
         // MakeCocktail 스크립트는 다른 게임오브젝트에 있을 수 있으므로
-        // FindObjectOfType을 사용하여 찾습니다
+        // FindObjectOfType을 사용하여 찾는다
         makeCocktail = FindObjectOfType<MakeCocktail>();
 
         if (makeCocktail == null)
