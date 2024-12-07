@@ -144,7 +144,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 5710bbd8082e9454a8919d09abdcbf04, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -177,7 +177,7 @@ GameObject:
   - component: {fileID: 4307455252843258527}
   - component: {fileID: 894241801631952186}
   - component: {fileID: 3137895580257425904}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Garnish03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -347,7 +347,7 @@ GameObject:
   - component: {fileID: 6818798087958216821}
   - component: {fileID: 7570242210656145360}
   - component: {fileID: 5686375515951414042}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Garnish01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
