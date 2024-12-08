@@ -6,15 +6,15 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Unconscious/Scenes/Main/GameStart.unity
+    path: Assets/Unconscious/Scenes/GameStart.unity
     guid: e40e19cd988464a468f9aa45303921ad
   - enabled: 1
-    path: Assets/Unconscious/Scenes/Main/Order.unity
+    path: Assets/Unconscious/Scenes/Order.unity
     guid: 00445a3c19fb6b94ba9025c01e77d9a6
   - enabled: 1
-    path: Assets/Unconscious/Scenes/Main/Cocktail.unity
+    path: Assets/Unconscious/Scenes/Cocktail.unity
     guid: 32f8213ec78aa1a44954c282392d74ae
   - enabled: 1
-    path: Assets/Unconscious/Scenes/Main/Topping.unity
+    path: Assets/Unconscious/Scenes/Topping.unity
     guid: 3e87f3c557d672c45975d53c5316875f
   m_configObjects: {}
