@@ -87,7 +87,7 @@ public class HorizontalSliderManager : MonoBehaviour
         }
     }
 
-    public void SlideLeft()
+    public void SlideRight()
     {
         if (isSliding || currentIndex >= categoryItems.Count - 1) return;
 
@@ -96,7 +96,7 @@ public class HorizontalSliderManager : MonoBehaviour
         SlideToCurrentIndex();
     }
 
-    public void SlideRight()
+    public void SlideLeft()
     {
         if (isSliding || currentIndex <= 0) return;
 
