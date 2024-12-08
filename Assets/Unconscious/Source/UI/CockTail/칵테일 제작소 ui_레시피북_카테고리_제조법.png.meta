@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 122f10fb1ef0e54409138cfb6e7dc7ac
+guid: 77d2601c72b01ba48a31207ea3bdc0eb
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -34,7 +34,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -97,13 +97,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "\uB370\uCF54\uB808\uC774\uC158ui_\uC548\uC8FC\uAC70\uB9ACtext_0"
+      name: "\uCE75\uD14C\uC77C \uC81C\uC791\uC18C ui_\uB808\uC2DC\uD53C\uBD81_\uCE74\uD14C\uACE0\uB9AC_\uC81C\uC870\uBC95_2"
       rect:
         serializedVersion: 2
-        x: 1532
-        y: 208
-        width: 152
-        height: 43
+        x: 1040
+        y: 434
+        width: 111
+        height: 38
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -111,8 +111,29 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 9317a2c2e76bfcd4d98c7effcb832368
-      internalID: 2098104038
+      spriteID: 46ea71087139bb849ab7a049951c677c
+      internalID: -207153169
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\uCE75\uD14C\uC77C \uC81C\uC791\uC18C ui_\uB808\uC2DC\uD53C\uBD81_\uCE74\uD14C\uACE0\uB9AC_\uC81C\uC870\uBC95_3"
+      rect:
+        serializedVersion: 2
+        x: 1221
+        y: 558
+        width: 30
+        height: 126
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f2a3bad9255748f428928c0b912b6328
+      internalID: -1818778262
       vertices: []
       indices: 
       edges: []
@@ -128,9 +149,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      "\uB370\uCF54\uB808\uC774\uC158ui_\uC548\uC8FC\uAC70\uB9ACtext_0": 2098104038
-      "\uB370\uCF54\uB808\uC774\uC158ui_\uC548\uC8FC\uAC70\uB9ACtext_1": -1383574843
-      "\uB370\uCF54\uB808\uC774\uC158ui_\uC548\uC8FC\uAC70\uB9ACtext_2": 986414574
+      "\uCE75\uD14C\uC77C \uC81C\uC791\uC18C ui_\uB808\uC2DC\uD53C\uBD81_\uCE74\uD14C\uACE0\uB9AC_\uC81C\uC870\uBC95_0": -1488215608
+      "\uCE75\uD14C\uC77C \uC81C\uC791\uC18C ui_\uB808\uC2DC\uD53C\uBD81_\uCE74\uD14C\uACE0\uB9AC_\uC81C\uC870\uBC95_1": -838647452
+      "\uCE75\uD14C\uC77C \uC81C\uC791\uC18C ui_\uB808\uC2DC\uD53C\uBD81_\uCE74\uD14C\uACE0\uB9AC_\uC81C\uC870\uBC95_2": -207153169
+      "\uCE75\uD14C\uC77C \uC81C\uC791\uC18C ui_\uB808\uC2DC\uD53C\uBD81_\uCE74\uD14C\uACE0\uB9AC_\uC81C\uC870\uBC95_3": -1818778262
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
