@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MakeCocktail : MonoBehaviour
 {
@@ -150,6 +151,7 @@ public class MakeCocktail : MonoBehaviour
         
         CalculateCoktail();
         
+        
     }
 
     public void CalculateCoktail()
@@ -180,6 +182,7 @@ public class MakeCocktail : MonoBehaviour
         {
             Debug.Log($"완성된 칵테일: {result.Value}");
             IsTechnic = false;
+            SceneManager.LoadScene("Dessert");
         }
         else
         {

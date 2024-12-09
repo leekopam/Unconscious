@@ -23,6 +23,7 @@ public class SpeechBubble : MonoBehaviour
     private List<string> dialogueLines;
     private int currentLineIndex;
     private bool isTyping;
+    public System.Action OnDialogueComplete;
 
     private void Awake()
     {
@@ -70,6 +71,7 @@ public class SpeechBubble : MonoBehaviour
             currentLineIndex++;
             if (currentLineIndex >= dialogueLines.Count)
             {
+                OnDialogueComplete?.Invoke();  // 대화가 끝났을 때 이벤트 발생
                 gameObject.SetActive(false);
             }
             else

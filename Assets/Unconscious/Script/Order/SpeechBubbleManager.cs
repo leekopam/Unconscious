@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class SpeechBubbleManager : MonoBehaviour
 {
@@ -7,8 +8,6 @@ public class SpeechBubbleManager : MonoBehaviour
     [SerializeField] private DialogueData dialogueData;
     [SerializeField] private Canvas targetCanvas;
     [SerializeField] private float BubblePos = 0f;
-
-    
 
     private Dictionary<GameObject, SpeechBubble> activeBubbles = new Dictionary<GameObject, SpeechBubble>();
 
@@ -20,9 +19,16 @@ public class SpeechBubbleManager : MonoBehaviour
         if (controller == null) return;
 
         GameObject bubbleObj = Instantiate(speechBubblePrefab, targetCanvas.transform);
-        bubbleObj.SetActive(true); // 생성 후 즉시 활성화
+        bubbleObj.SetActive(true);
 
         SpeechBubble bubble = bubbleObj.GetComponent<SpeechBubble>();
+        bubble.OnDialogueComplete += () => {
+            //말풍선 대화 끝나는 지점
+            Debug.Log($"손님 {controller.CustomerType}의 대화가 종료되었습니다.");
+            SceneManager.LoadScene("Cocktail");
+            RemoveSpeechBubble(customer);
+        };
+
         List<string> dialogueLines = dialogueData.GetDialogueForCustomer(controller.CustomerType);
         bubble.Initialize(dialogueLines);
 
@@ -32,16 +38,12 @@ public class SpeechBubbleManager : MonoBehaviour
 
     private void PositionBubbleAboveCustomer(GameObject bubble, GameObject customer)
     {
-        // 캐릭터의 현재 위치 가져오기
         Vector3 customerPosition = customer.transform.position;
-
-        // 말풍선 위치 설정 (캐릭터 위 20 유닛)
         Vector3 bubblePosition = new Vector3(
             customerPosition.x,
             customerPosition.y + BubblePos,
             customerPosition.z
         );
-
         bubble.transform.position = bubblePosition;
     }
 
@@ -49,8 +51,20 @@ public class SpeechBubbleManager : MonoBehaviour
     {
         if (activeBubbles.TryGetValue(customer, out SpeechBubble bubble))
         {
+            Debug.Log("말풍선이 제거되었습니다.");
             Destroy(bubble.gameObject);
             activeBubbles.Remove(customer);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        foreach (var bubble in activeBubbles.Values)
+        {
+            if (bubble != null)
+            {
+                bubble.OnDialogueComplete = null;
+            }
         }
     }
 }

@@ -15,6 +15,6 @@ EditorBuildSettings:
     path: Assets/Unconscious/Scenes/Cocktail.unity
     guid: 32f8213ec78aa1a44954c282392d74ae
   - enabled: 1
-    path: Assets/Unconscious/Scenes/Topping.unity
+    path: Assets/Unconscious/Scenes/Dessert.unity
     guid: 3e87f3c557d672c45975d53c5316875f
   m_configObjects: {}
