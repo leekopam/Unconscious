@@ -4,7 +4,6 @@ using UnityEngine.UI;
 public class CustomerController : MonoBehaviour
 {
     [SerializeField] private int customerType;
-
     public int CustomerType => customerType;
 
     private void OnEnable()
