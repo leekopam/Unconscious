@@ -20,6 +20,8 @@ public class MakeCocktail : MonoBehaviour
     private int totalBitterness = 0;
     private int totalFlavorIntensity = 0;
 
+    private bool IsTechnic = false;
+
     private void Awake()
     {
         recipeBook = new RecipeBook();
@@ -127,20 +129,27 @@ public class MakeCocktail : MonoBehaviour
 
     public void SetMixStateShake()
     {
+        IsTechnic = true;
         SetMixState(MixState.Shake);
-        CalculateCoktail();
     }
 
     public void SetMixStateStir()
     {
+        IsTechnic = true;
         SetMixState(MixState.Stir);
-        CalculateCoktail();
+        
     }
 
     public void SetMixStateLayer()
     {
-        SetMixState(MixState.Layer);
+        //Layer외 기법을 상용하면 그냥 완성버튼
+        if (!IsTechnic)
+        {
+            SetMixState(MixState.Layer);
+        }
+        
         CalculateCoktail();
+        
     }
 
     public void CalculateCoktail()
@@ -170,6 +179,7 @@ public class MakeCocktail : MonoBehaviour
         if (result.HasValue)
         {
             Debug.Log($"완성된 칵테일: {result.Value}");
+            IsTechnic = false;
         }
         else
         {
