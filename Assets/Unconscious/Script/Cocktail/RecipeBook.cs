@@ -7,7 +7,7 @@ public enum Recipe
     경성,
     한양의일출,
     명경지수,
-    풀빛아리아,
+    녹색요정,
    정체불명의음료
 }
 
@@ -37,29 +37,29 @@ public class RecipeBook : MonoBehaviour
         {
             return Recipe.그린나래;
         }
-        //경성 = 나린 이화주 + 해류 뭄해리
+        //경성 = 나린 이화주 + 호접지몽
         if ((mixstate == MixState.Layer && 
-            name1 == "나린 이화주" && name2 == " 해류 뭄해리") || (name1 == " 해류 뭄해리" && name2 == "나린 이화주"))
+            name1 == "나린 이화주" && name2 == " 호접지몽") || (name1 == " 호접지몽" && name2 == "나린 이화주"))
         {
             return Recipe.경성;
         }
-        //한양의_일출 = 소슬바람 + 영반월
+        //한양의_일출 = 소슬바람 + 동짓달
         if ((mixstate == MixState.Shake && 
-            name1 == "소슬바람" && name2 == "영반월") || (name1 == "영반월" && name2 == "소슬바람"))
+            name1 == "소슬바람" && name2 == "동짓달") || (name1 == "동짓달" && name2 == "소슬바람"))
         {
             return Recipe.한양의일출;
         }
-        //명경지수 = 도화주 + 영반월
+        //명경지수 = 도화주 + 동짓달
         if ((mixstate == MixState.Stir && 
-            name1 == "도화주" && name2 == "영반월") || (name1 == "영반월" && name2 == "도화주"))
+            name1 == "도화주" && name2 == "동짓달") || (name1 == "동짓달" && name2 == "도화주"))
         {
             return Recipe.명경지수;
         }
-        //풀_빛_아리아 = 가향주 + 해류 뭄해리
+        //녹색_요정 = 가향주 + 호접지몽
         if ((mixstate == MixState.Layer && 
-            name1 == "가향주" && name2 == "해류 뭄해리") || (name1 == "해류 뭄해리" && name2 == "가향주"))
+            name1 == "가향주" && name2 == "호접지몽") || (name1 == "호접지몽" && name2 == "가향주"))
         {
-            return Recipe.풀빛아리아;
+            return Recipe.녹색요정;
         }
         else
         {

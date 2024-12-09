@@ -3,51 +3,100 @@ using UnityEngine;
 
 public class MakeCocktail : MonoBehaviour
 {
-    private const int MAX_ALCOHOL_COUNT = 2; // 최대 저장 가능한 술의 개수
+    private const int MAX_ALCOHOL_COUNT = 2;
+    private const int MAX_LAYERS = 4;
 
-    string AlcoholName;
-    private int AlcoholContent; // 도수
-    private int Sweetness;      // 단맛
-    private int Bitterness;     // 쓴맛
-    private FlavorType FlavorType; // 향의 종류
-    private int FlavorIntensity;   // 향의 세기
+    [SerializeField] private GameObject resetButton;
 
-    //현재 선택된 술 정보
+    private int currentLayer = 0;
+    private List<GameObject> activeObjects = new List<GameObject>();
     private List<AlcoholStatus> alcoholStatuses = new List<AlcoholStatus>();
 
-    int totalAlcoholContent = 0;
-    int totalSweetness = 0;
-    int totalBitterness = 0;
-    int totalFlavorIntensity = 0;
-
     private RecipeBook recipeBook;
-    private MixState currentMixState; // 현재 믹스 상태를 저장할 변수
+    private MixState currentMixState;
+
+    private int totalAlcoholContent = 0;
+    private int totalSweetness = 0;
+    private int totalBitterness = 0;
+    private int totalFlavorIntensity = 0;
 
     private void Awake()
     {
         recipeBook = new RecipeBook();
+        if (resetButton != null)
+        {
+            resetButton.SetActive(true);
+        }
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.F2))
         {
-            ClearAlcoholList();
+            ResetAll();
         }
     }
 
-    //선택한 술 정보를 받아옴
-    public void GetAlcoholStatus(string name, int alcoholContent,
-    int sweetness, int bitterness, FlavorType flavorType, int flavorIntensity)
+    public int GetCurrentLayer()
     {
-        // 최대 개수 체크
-        if (alcoholStatuses.Count >= 2)
+        return currentLayer;
+    }
+
+    public void ActivateLayerObject(GameObject obj)
+    {
+        if (currentLayer < MAX_LAYERS)
+        {
+            DeactivateLayerObjects(currentLayer);
+            obj.SetActive(true);
+            activeObjects.Add(obj);
+            currentLayer++;
+        }
+    }
+
+    private void DeactivateLayerObjects(int layer)
+    {
+        activeObjects.RemoveAll(obj =>
+        {
+            if (obj != null && obj.GetComponent<LayerIdentifier>()?.LayerNumber == layer)
+            {
+                obj.SetActive(false);
+                return true;
+            }
+            return false;
+        });
+    }
+
+    public void ResetAll()
+    {
+        foreach (GameObject obj in activeObjects)
+        {
+            if (obj != null)
+            {
+                obj.SetActive(false);
+            }
+        }
+
+        activeObjects.Clear();
+        alcoholStatuses.Clear();
+        currentLayer = 0;
+
+        totalAlcoholContent = 0;
+        totalSweetness = 0;
+        totalBitterness = 0;
+        totalFlavorIntensity = 0;
+
+        Debug.Log("모든 상태가 초기화되었습니다.");
+    }
+
+    public void GetAlcoholStatus(string name, int alcoholContent,
+        int sweetness, int bitterness, FlavorType flavorType, int flavorIntensity)
+    {
+        if (alcoholStatuses.Count >= MAX_ALCOHOL_COUNT)
         {
             Debug.Log("더 이상 술을 추가할 수 없습니다.");
             return;
         }
 
-        // AlcoholStatus 객체 생성 및 속성 설정
         AlcoholStatus alcoholStatus = new AlcoholStatus
         {
             Name = name,
@@ -59,6 +108,7 @@ public class MakeCocktail : MonoBehaviour
         };
 
         alcoholStatuses.Add(alcoholStatus);
+
         Debug.Log($"현재 저장된 술의 개수: {alcoholStatuses.Count}");
         Debug.Log(
             $"추가된 술: {name}, " +
@@ -69,31 +119,29 @@ public class MakeCocktail : MonoBehaviour
             $"향의 세기: {flavorIntensity}");
     }
 
-    // 믹스 상태를 설정하는 메서드
     public void SetMixState(MixState mixState)
     {
         currentMixState = mixState;
         Debug.Log($"현재 믹스 상태: {currentMixState}");
     }
 
-    public void SetMixStateShake() 
-    { 
+    public void SetMixStateShake()
+    {
         SetMixState(MixState.Shake);
         CalculateCoktail();
     }
 
-    public void SetMixStateStir() 
-    { 
+    public void SetMixStateStir()
+    {
         SetMixState(MixState.Stir);
         CalculateCoktail();
     }
-    public void SetMixStateLayer() 
-    { 
+
+    public void SetMixStateLayer()
+    {
         SetMixState(MixState.Layer);
         CalculateCoktail();
     }
-
-
 
     public void CalculateCoktail()
     {
@@ -113,9 +161,11 @@ public class MakeCocktail : MonoBehaviour
         AlcoholStatus alcohol2 = alcoholStatuses[1];
 
         Recipe? result = recipeBook.Check_Cocktail_Recipe(
-            alcohol1.Name, alcohol1.AlcoholContent, alcohol1.Sweetness, alcohol1.Bitterness, alcohol1.Flavor, alcohol1.FlavorIntensity,
-            alcohol2.Name, alcohol2.AlcoholContent, alcohol2.Sweetness, alcohol2.Bitterness, alcohol2.Flavor, alcohol2.FlavorIntensity,
-            currentMixState); // MixState를 전달
+            alcohol1.Name, alcohol1.AlcoholContent, alcohol1.Sweetness,
+            alcohol1.Bitterness, alcohol1.Flavor, alcohol1.FlavorIntensity,
+            alcohol2.Name, alcohol2.AlcoholContent, alcohol2.Sweetness,
+            alcohol2.Bitterness, alcohol2.Flavor, alcohol2.FlavorIntensity,
+            currentMixState);
 
         if (result.HasValue)
         {
@@ -135,7 +185,6 @@ public class MakeCocktail : MonoBehaviour
         }
     }
 
-    // 리스트 초기화
     public void ClearAlcoholList()
     {
         alcoholStatuses.Clear();

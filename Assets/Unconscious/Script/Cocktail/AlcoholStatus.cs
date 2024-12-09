@@ -9,12 +9,13 @@ public class AlcoholStatus : MonoBehaviour
     public FlavorType Flavor;
     public int FlavorIntensity;
 
+    // 각 음료에 할당된 오브젝트들을 관리하는 배열
+    [SerializeField] private GameObject[] layerObjects;
+
     private MakeCocktail makeCocktail;
 
     private void Start()
     {
-        // MakeCocktail 스크립트는 다른 게임오브젝트에 있을 수 있으므로
-        // FindObjectOfType을 사용하여 찾는다
         makeCocktail = FindObjectOfType<MakeCocktail>();
 
         if (makeCocktail == null)
@@ -27,10 +28,15 @@ public class AlcoholStatus : MonoBehaviour
     {
         if (makeCocktail != null)
         {
-            // 게임오브젝트의 이름을 가져옵니다
             Name = gameObject.name;
 
-            // MakeCocktail 스크립트의 메서드를 호출합니다
+            // 현재 층수에 해당하는 오브젝트 활성화 요청
+            int currentLayer = makeCocktail.GetCurrentLayer();
+            if (currentLayer < layerObjects.Length)
+            {
+                makeCocktail.ActivateLayerObject(layerObjects[currentLayer]);
+            }
+
             makeCocktail.GetAlcoholStatus(
                 Name,
                 AlcoholContent,
@@ -41,6 +47,18 @@ public class AlcoholStatus : MonoBehaviour
             );
         }
     }
+
+    // 이 음료에 할당된 모든 오브젝트 비활성화
+    public void DeactivateAllObjects()
+    {
+        foreach (GameObject obj in layerObjects)
+        {
+            if (obj != null)
+            {
+                obj.SetActive(false);
+            }
+        }
+    }
 }
 
 public enum FlavorType
@@ -48,4 +66,10 @@ public enum FlavorType
     Fruity,
     Nutty,
     Alcohol
+}
+
+
+public class LayerIdentifier : MonoBehaviour
+{
+    [SerializeField] public int LayerNumber; // 이 오브젝트가 속한 층수 (0-3)
 }
