@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2658984097149372746}
   - component: {fileID: 216855283086966144}
   m_Layer: 3
-  m_Name: Garnish03
+  m_Name: Lemon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 2640036769431156807}
   - component: {fileID: 236364478356720781}
   m_Layer: 0
-  m_Name: Garnish02
+  m_Name: Flower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -178,7 +178,7 @@ GameObject:
   - component: {fileID: 2863483194008952849}
   - component: {fileID: 25286030691439835}
   m_Layer: 3
-  m_Name: Garnish01
+  m_Name: Olive
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -261,7 +261,7 @@ GameObject:
   - component: {fileID: 2093327948865252509}
   - component: {fileID: 4244653525206980695}
   m_Layer: 0
-  m_Name: Cup_D01
+  m_Name: Liquid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -364,9 +364,9 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3072340297281020728}
+  - {fileID: 1158262237941166004}
   - {fileID: 1372631282716440546}
   - {fileID: 1389712773429020399}
-  - {fileID: 1158262237941166004}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 90}
 --- !u!33 &4119444524018821588

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3306450659831922612}
   - component: {fileID: 722308851179965310}
   m_Layer: 0
-  m_Name: Garnish02
+  m_Name: Flower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 1835789541100956992}
   - component: {fileID: 4512324894731786634}
   m_Layer: 0
-  m_Name: Cup_D05
+  m_Name: Liquid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -178,7 +178,7 @@ GameObject:
   - component: {fileID: 894241801631952186}
   - component: {fileID: 3137895580257425904}
   m_Layer: 3
-  m_Name: Garnish03
+  m_Name: Lemon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -348,7 +348,7 @@ GameObject:
   - component: {fileID: 7570242210656145360}
   - component: {fileID: 5686375515951414042}
   m_Layer: 3
-  m_Name: Garnish01
+  m_Name: Olive
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
