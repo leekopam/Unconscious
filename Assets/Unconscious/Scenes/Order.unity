@@ -380,7 +380,7 @@ MonoBehaviour:
     type: 3}
   dialogueData: {fileID: 11400000, guid: 46a5db0740558bb45b2125f8ef75584b, type: 2}
   targetCanvas: {fileID: 961678987}
-  BubblePos: 0.7
+  BubblePos: 1
 --- !u!1 &225259758
 GameObject:
   m_ObjectHideFlags: 0
@@ -2023,7 +2023,7 @@ PrefabInstance:
     - target: {fileID: 7953122962055115905, guid: 59a39e9818cf25c49af8691eb39ea9da,
         type: 3}
       propertyPath: fadeTime
-      value: 10
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

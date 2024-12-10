@@ -182,6 +182,11 @@ public class MakeCocktail : MonoBehaviour
         {
             Debug.Log($"완성된 칵테일: {result.Value}");
             IsTechnic = false;
+
+            // 레시피 검증을 위해 SpeechBubbleManager에 전달
+            SpeechBubbleManager speechBubbleManager = FindObjectOfType<SpeechBubbleManager>();
+            speechBubbleManager.ValidateCocktail(result.Value);
+
             SceneManager.LoadScene("Dessert");
         }
         else

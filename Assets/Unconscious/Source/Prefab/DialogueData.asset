@@ -17,3 +17,10 @@ MonoBehaviour:
     dialogueLines:
     - ...
     - "\uC8FC\uC778\uC7A5 \uC5EC\uAE30 \uBA85\uACBD\uC9C0\uC218 \uD558\uB098 \uC8FC\uC2DC\uAC8C"
+    requestedRecipe: 4
+    positiveReactions:
+    - "\uB0B4\uAC00 \uC6D0\uD558\uB358 \uADF8\uB300\uB85C \uB098\uC654\uAD70"
+    negativeReactions:
+    - "\uC774\uAC74 \uB0B4\uAC00 \uC8FC\uBB38\uD55C \uC74C\uB8CC\uAC00 \uC544\uB2CC\uAC83
+      \uAC19\uB2E4\uB9CC"
+    isOrderCompleted: 0

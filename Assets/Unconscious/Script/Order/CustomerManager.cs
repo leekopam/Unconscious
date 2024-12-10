@@ -1,7 +1,7 @@
 using DG.Tweening;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 
 public class CustomerManager : MonoBehaviour
 {
@@ -12,7 +12,7 @@ public class CustomerManager : MonoBehaviour
     [SerializeField] private float orderTimeout = 10f;
     [SerializeField] private float spawnInterval = 5f;
     [SerializeField] private Canvas targetCanvas;
-
+    [SerializeField] private CustomerStateData customerStateData;
 
     private List<Customer> currentCustomers = new List<Customer>();
     private HashSet<int> usedCustomerIndices = new HashSet<int>();
@@ -23,6 +23,26 @@ public class CustomerManager : MonoBehaviour
 
     public delegate void TimerUpdated(float timeRemaining);
     public event TimerUpdated OnTimerUpdated;
+
+    private void Awake()
+    {
+        DontDestroyOnLoad(this.gameObject);
+        SceneManager.sceneLoaded += OnSceneLoaded;
+
+        // 초기화 시 상태 데이터 초기화
+        if (customerStateData == null)
+        {
+            customerStateData = ScriptableObject.CreateInstance<CustomerStateData>();
+        }
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "Order")
+        {
+            RestoreCustomerState();
+        }
+    }
 
     private void Start()
     {
@@ -50,6 +70,63 @@ public class CustomerManager : MonoBehaviour
         }
     }
 
+    private void RestoreCustomerState()
+    {
+        if (customerStateData.savedCustomerStates.Count == 0)
+        {
+            SpawnRandomCustomer();
+            return;
+        }
+
+        var customerState = customerStateData.savedCustomerStates[0];
+
+        GameObject newCustomerObject = Instantiate(
+            customerPrefabs[customerState.customerType],
+            targetCanvas.transform
+        );
+
+        RectTransform rectTransform = newCustomerObject.GetComponent<RectTransform>();
+        rectTransform.position = customerState.position;
+
+        Customer restoredCustomer = new Customer(
+            newCustomerObject,
+            customerState.customerType,
+            null
+        );
+
+        currentCustomers.Add(restoredCustomer);
+        usedCustomerIndices.Add(customerState.customerType);
+
+        // 주문 완료 상태에 따른 처리
+        if (customerState.isOrderCompleted)
+        {
+            SpeechBubbleManager speechBubbleManager = FindObjectOfType<SpeechBubbleManager>();
+            speechBubbleManager?.ShowOrderCompletedDialogue(newCustomerObject);
+        }
+        else if (!customerState.hasShownInitialDialogue)
+        {
+            EnableCustomerInteraction(restoredCustomer);
+        }
+    }
+
+    public void SaveCustomerState()
+    {
+        // 기존 상태 초기화
+        customerStateData.ClearStates();
+
+        // 현재 고객 상태 저장
+        foreach (var customer in currentCustomers)
+        {
+            CustomerStateData.CustomerState state = new CustomerStateData.CustomerState
+            {
+                customerType = customer.Index,
+                position = customer.GameObject.transform.position,
+                isOrderCompleted = false // 주문 완료 상태 저장
+            };
+            customerStateData.savedCustomerStates.Add(state);
+        }
+    }
+
     private void SpawnRandomCustomer()
     {
         if (currentCustomers.Count >= maxCustomers) return;
@@ -60,13 +137,11 @@ public class CustomerManager : MonoBehaviour
         int randomSpawnPointIndex = Random.Range(0, spawnPoints.Length);
         if (IsCustomerAtTargetPoint(randomSpawnPointIndex)) return;
 
-        GameObject newCustomerObject = Instantiate(customerPrefabs[randomIndex],
-            targetCanvas.transform);
+        GameObject newCustomerObject = Instantiate(customerPrefabs[randomIndex], targetCanvas.transform);
         RectTransform rectTransform = newCustomerObject.GetComponent<RectTransform>();
         rectTransform.position = spawnPoints[randomSpawnPointIndex].position;
 
-        Customer newCustomer = new Customer(newCustomerObject, randomIndex,
-            spawnPoints[randomSpawnPointIndex]);
+        Customer newCustomer = new Customer(newCustomerObject, randomIndex, spawnPoints[randomSpawnPointIndex]);
         currentCustomers.Add(newCustomer);
         usedCustomerIndices.Add(randomIndex);
         MoveCustomerUp(newCustomer, randomSpawnPointIndex);
@@ -76,8 +151,7 @@ public class CustomerManager : MonoBehaviour
     {
         foreach (var customer in currentCustomers)
         {
-            if (Vector3.Distance(customer.GameObject.transform.position,
-                targetPoints[targetPointIndex].position) < 0.1f)
+            if (Vector3.Distance(customer.GameObject.transform.position, targetPoints[targetPointIndex].position) < 0.1f)
             {
                 return true;
             }
@@ -105,7 +179,6 @@ public class CustomerManager : MonoBehaviour
     private void MoveCustomerUp(Customer customer, int index)
     {
         Transform targetPoint = targetPoints[index];
-
         customer.GameObject.transform.DOMove(targetPoint.position, moveUpDuration)
             .SetEase(Ease.InOutQuad)
             .OnComplete(() =>
