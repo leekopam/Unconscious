@@ -2023,7 +2023,7 @@ PrefabInstance:
     - target: {fileID: 7953122962055115905, guid: 59a39e9818cf25c49af8691eb39ea9da,
         type: 3}
       propertyPath: fadeTime
-      value: 10
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
