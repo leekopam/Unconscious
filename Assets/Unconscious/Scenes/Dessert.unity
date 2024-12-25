@@ -553,7 +553,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &244913736
 Transform:
   m_ObjectHideFlags: 0
@@ -578,9 +578,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 244913734}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ebf365512d172ee48a8dcd115a30a770, type: 3}
+  m_Script: {fileID: 11500000, guid: ab8c58a9c4e0e274489d611de999731f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speechBubble: {fileID: 0}
 --- !u!1 &253572253 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1749437682252426584, guid: 028df2210be67cb4589977f64d0ff8e9,
@@ -3462,6 +3463,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5078352288603669974, guid: efff19c2c99af6b4f83e2cd714230fa7,
+        type: 3}
+      propertyPath: m_InitialState
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6561338574571172092, guid: efff19c2c99af6b4f83e2cd714230fa7,
         type: 3}

@@ -27,7 +27,7 @@ public class SpeechBubble : MonoBehaviour
 
     private void Awake()
     {
-        bubbleRect = GetComponent<RectTransform>();
+        bubbleRect = backgroundImage.GetComponent<RectTransform>();
         textRect = dialogueText.GetComponent<RectTransform>();
 
         // 말풍선 전체 크기 설정
@@ -51,9 +51,9 @@ public class SpeechBubble : MonoBehaviour
 
     public void Initialize(List<string> lines)
     {
-        dialogueLines = lines;
+        gameObject.SetActive(true); // SpeechBubble 오브젝트 활성화
+        this.dialogueLines = lines;
         currentLineIndex = 0;
-        gameObject.SetActive(true);
         ShowNextLine();
     }
 
@@ -69,6 +69,7 @@ public class SpeechBubble : MonoBehaviour
         else
         {
             currentLineIndex++;
+
             if (currentLineIndex >= dialogueLines.Count)
             {
                 OnDialogueComplete?.Invoke();  // 대화가 끝났을 때 이벤트 발생
@@ -83,24 +84,31 @@ public class SpeechBubble : MonoBehaviour
 
     private void ShowNextLine()
     {
-        StartCoroutine(TypeText(dialogueLines[currentLineIndex]));
+        if (currentLineIndex < dialogueLines.Count)
+        {
+            StartCoroutine(TypeText(dialogueLines[currentLineIndex]));
+        }
+        else
+        {
+            OnDialogueComplete?.Invoke();
+            gameObject.SetActive(false);
+        }
     }
 
     private IEnumerator TypeText(string text)
     {
         isTyping = true;
         dialogueText.text = "";
-
         foreach (char c in text)
         {
             dialogueText.text += c;
-            AdjustBubbleSize();
+            AdjustBubbleSize(); // 각 문자가 추가될 때마다 말풍선 크기 조절
             yield return new WaitForSeconds(typingSpeed);
         }
-
         isTyping = false;
     }
 
+    // 말풍선 크기 조정 로직
     private void AdjustBubbleSize()
     {
         Vector2 textSize = dialogueText.GetPreferredValues();

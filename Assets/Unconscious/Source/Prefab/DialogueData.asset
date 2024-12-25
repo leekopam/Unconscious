@@ -17,3 +17,10 @@ MonoBehaviour:
     dialogueLines:
     - ...
     - "\uC8FC\uC778\uC7A5 \uC5EC\uAE30 \uBA85\uACBD\uC9C0\uC218 \uD558\uB098 \uC8FC\uC2DC\uAC8C"
+    middleDialogueLines:
+    - "\uC911\uAC04\uC911\uAC04\uC911\uAC04"
+    clearDialogue:
+    - "\uC131\uACF5"
+    faileDialogue:
+    - "\uC2E4\uD328"
+    recipe: 4

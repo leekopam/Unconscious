@@ -11,6 +11,7 @@ public class CustomerManager : MonoBehaviour
     [SerializeField] private float orderTimeout = 10f; // 주문 제한 시간
     [SerializeField] private float spawnInterval = 5f; // 고객 생성 간격
     [SerializeField] private Canvas targetCanvas; // 고객을 생성할 캔버스
+    [SerializeField] private DialogueData dialogueData; // 대화 데이터
 
     private List<Customer> currentCustomers = new List<Customer>(); // 현재 존재하는 고객 목록
     private HashSet<int> usedCustomerIndices = new HashSet<int>(); // 이미 사용된 고객 인덱스
@@ -30,6 +31,16 @@ public class CustomerManager : MonoBehaviour
         {
             SpawnRandomCustomer(); // 저장된 고객이 없으면 새로운 고객 생성
         }
+
+        // DialogueData 할당
+        if (dialogueData == null)
+        {
+            dialogueData = FindObjectOfType<DialogueData>();
+            if (dialogueData == null)
+            {
+                Debug.LogError("DialogueData를 찾을 수 없습니다.");
+            }
+        }
     }
 
     private void Update()
@@ -40,18 +51,20 @@ public class CustomerManager : MonoBehaviour
             OnTimerUpdated?.Invoke(currentOrderTimeout);
             if (currentOrderTimeout <= 0)
             {
-                //TimeoutOrder();
+                // 주문 시간 초과 처리
+                // TimeoutOrder();
             }
         }
 
         spawnTimer -= Time.deltaTime;
         if (spawnTimer <= 0)
         {
-            SpawnRandomCustomer();
+            SpawnRandomCustomer(); // 고객 생성
             spawnTimer = spawnInterval;
         }
     }
 
+    // 랜덤 고객 생성
     private void SpawnRandomCustomer()
     {
         if (currentCustomers.Count >= maxCustomers || IsAllTargetPointsOccupied()) return;
@@ -59,17 +72,18 @@ public class CustomerManager : MonoBehaviour
         int randomIndex = GetUniqueRandomIndex();
         if (randomIndex == -1) return;
 
-        int randomSpawnPointIndex = GetAvailableTargetPointIndex();
-        if (randomSpawnPointIndex == -1) return;
+        int randomSpawnPointIndex = Random.Range(0, spawnPoints.Length);
+        int randomTargetPointIndex = GetAvailableTargetPointIndex();
+        if (randomTargetPointIndex == -1) return;
 
         GameObject newCustomerObject = Instantiate(customerPrefabs[randomIndex], targetCanvas.transform);
         RectTransform rectTransform = newCustomerObject.GetComponent<RectTransform>();
         rectTransform.position = spawnPoints[randomSpawnPointIndex].position;
 
-        Customer newCustomer = new Customer(newCustomerObject, randomIndex, spawnPoints[randomSpawnPointIndex], randomSpawnPointIndex);
+        Customer newCustomer = new Customer(newCustomerObject, randomIndex, spawnPoints[randomSpawnPointIndex], randomTargetPointIndex);
         currentCustomers.Add(newCustomer);
         usedCustomerIndices.Add(randomIndex);
-        MoveCustomerUp(newCustomer, randomSpawnPointIndex);
+        MoveCustomerUp(newCustomer, randomTargetPointIndex);
     }
 
     // 모든 목표 위치가 점유되었는지 확인
@@ -95,6 +109,7 @@ public class CustomerManager : MonoBehaviour
         return availableIndices[Random.Range(0, availableIndices.Count)];
     }
 
+    // 특정 목표 위치에 고객이 있는지 확인
     private bool IsCustomerAtTargetPoint(int targetPointIndex)
     {
         foreach (var customer in currentCustomers)
@@ -107,6 +122,7 @@ public class CustomerManager : MonoBehaviour
         return false;
     }
 
+    // 사용되지 않은 랜덤 인덱스 반환
     private int GetUniqueRandomIndex()
     {
         List<int> availableIndices = new List<int>();
@@ -124,41 +140,89 @@ public class CustomerManager : MonoBehaviour
         return availableIndices[randomIndex];
     }
 
+    // 고객을 목표 위치로 이동
     private void MoveCustomerUp(Customer customer, int index)
     {
         Transform targetPoint = targetPoints[index];
 
+        // 고객을 목표 위치로 이동
         customer.GameObject.transform.DOMove(targetPoint.position, moveUpDuration)
             .SetEase(Ease.InOutQuad)
             .OnComplete(() =>
             {
-                EnableCustomerInteraction(customer);
-                StartOrderTimeout();
+                // 고객이 목표 지점에 도달했을 때 호출되는 부분
+                EnableCustomerInteraction(customer); // 고객 상호작용 활성화
+
+                // SpeechBubbleManager를 찾아서 말풍선을 표시
+                SpeechBubbleManager speechBubbleManager = FindObjectOfType<SpeechBubbleManager>();
+                if (speechBubbleManager != null)
+                {
+                    // DialogueData를 찾아서 고객의 대화 데이터를 가져옴
+                    if (dialogueData != null)
+                    {
+                        var dialogue = dialogueData.customerDialogues.Find(d => d.customerType == customer.Index);
+                        if (dialogue != null)
+                        {
+                            // CustomerDialogue 컴포넌트를 추가하고 초기화
+                            SpeechBubble speechBubble = customer.GameObject.GetComponentInChildren<SpeechBubble>();
+                            CustomerDialogue customerDialogue = customer.GameObject.AddComponent<CustomerDialogue>();
+                            customerDialogue.Initialize(
+                                customer.Index,
+                                dialogue.dialogueLines,
+                                dialogue.middleDialogueLines,
+                                dialogue.clearDialogue,
+                                dialogue.faileDialogue,
+                                speechBubble
+                            );
+
+                            // 말풍선을 표시하고 대화 내용을 출력
+                            speechBubbleManager.ShowSpeechBubble(customer.GameObject);
+                            customerDialogue.PrintDialogues(); // 대화 내용 출력
+                        }
+                    }
+                }
             });
     }
 
+    // 고객 상호작용 활성화
     private void EnableCustomerInteraction(Customer customer)
     {
+        // SpeechBubbleManager를 찾아서 말풍선을 표시
         SpeechBubbleManager speechBubbleManager = FindObjectOfType<SpeechBubbleManager>();
         if (speechBubbleManager != null)
         {
-            CustomerDialogue dialogue = customer.GameObject.AddComponent<CustomerDialogue>();
-            dialogue.Initialize(customer.Index, new List<string> { "안녕하세요", "주문하고 싶어요" });
-            speechBubbleManager.ShowSpeechBubble(customer.GameObject);
+            // DialogueData를 찾아서 고객의 대화 데이터를 가져옴
+            if (dialogueData != null)
+            {
+                var dialogue = dialogueData.customerDialogues.Find(d => d.customerType == customer.Index);
+                if (dialogue != null)
+                {
+                    // CustomerDialogue 컴포넌트를 추가하고 초기화
+                    SpeechBubble speechBubble = customer.GameObject.GetComponentInChildren<SpeechBubble>();
+                    CustomerDialogue customerDialogue = customer.GameObject.AddComponent<CustomerDialogue>();
+                    customerDialogue.Initialize(
+                        customer.Index,
+                        dialogue.dialogueLines,
+                        dialogue.middleDialogueLines,
+                        dialogue.clearDialogue,
+                        dialogue.faileDialogue,
+                        speechBubble
+                    );
+
+                    // 말풍선을 표시
+                    speechBubbleManager.ShowSpeechBubble(customer.GameObject);
+                }
+            }
         }
     }
 
+    // 고객 클릭 시 호출
     private void OnCustomerClick(Customer customer)
     {
         Debug.Log($"Customer {customer.Index} clicked");
     }
 
-    private void StartOrderTimeout()
-    {
-        currentOrderTimeout = orderTimeout;
-        OnTimerUpdated?.Invoke(currentOrderTimeout);
-    }
-
+    // 대화 활성화 상태 설정
     public void SetDialogueActive(bool active)
     {
         isDialogueActive = active;
@@ -186,7 +250,7 @@ public class CustomerManager : MonoBehaviour
             CustomerDataList customerDataList = JsonUtility.FromJson<CustomerDataList>(json);
             foreach (var customerData in customerDataList.customers)
             {
-                SpawnSavedCustomer(customerData);
+                SpawnSavedCustomer(customerData); // 저장된 고객 생성
             }
         }
     }
@@ -196,12 +260,12 @@ public class CustomerManager : MonoBehaviour
     {
         GameObject newCustomerObject = Instantiate(customerPrefabs[customerData.index], targetCanvas.transform);
         RectTransform rectTransform = newCustomerObject.GetComponent<RectTransform>();
-        rectTransform.position = targetPoints[customerData.targetPointIndex].position;
+        rectTransform.position = spawnPoints[customerData.targetPointIndex].position;
 
         Customer newCustomer = new Customer(newCustomerObject, customerData.index, spawnPoints[customerData.targetPointIndex], customerData.targetPointIndex);
         currentCustomers.Add(newCustomer);
         usedCustomerIndices.Add(customerData.index);
-        EnableCustomerInteraction(newCustomer);
+        MoveCustomerUp(newCustomer, customerData.targetPointIndex);
     }
 
     // 씬 전환 시 고객 정보 저장
@@ -247,3 +311,4 @@ public class CustomerDataList
 {
     public List<CustomerData> customers;
 }
+
