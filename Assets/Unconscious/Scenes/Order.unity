@@ -547,7 +547,7 @@ GameObject:
   - component: {fileID: 396582172}
   m_Layer: 5
   m_Name: Start (2)
-  m_TagString: Untagged
+  m_TagString: SpawnPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1166,7 +1166,7 @@ GameObject:
   - component: {fileID: 826900747}
   m_Layer: 5
   m_Name: End
-  m_TagString: Untagged
+  m_TagString: TargetPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1861,7 +1861,7 @@ GameObject:
   - component: {fileID: 1235771241}
   m_Layer: 5
   m_Name: Start
-  m_TagString: Untagged
+  m_TagString: SpawnPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2283,7 +2283,7 @@ GameObject:
   - component: {fileID: 1333122047}
   m_Layer: 5
   m_Name: End (2)
-  m_TagString: Untagged
+  m_TagString: TargetPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3195,7 +3195,7 @@ GameObject:
   - component: {fileID: 1990757930}
   m_Layer: 5
   m_Name: Start (1)
-  m_TagString: Untagged
+  m_TagString: SpawnPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3270,7 +3270,7 @@ GameObject:
   - component: {fileID: 2125996268}
   m_Layer: 5
   m_Name: End (1)
-  m_TagString: Untagged
+  m_TagString: TargetPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

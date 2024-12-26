@@ -14,6 +14,26 @@ public class CustomerDialogue : MonoBehaviour
         Fail
     }
 
+    private static CustomerDialogue instance;
+    public static CustomerDialogue Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = FindObjectOfType<CustomerDialogue>();
+                if (instance == null)
+                {
+                    GameObject singletonObject = new GameObject();
+                    instance = singletonObject.AddComponent<CustomerDialogue>();
+                    singletonObject.name = typeof(CustomerDialogue).ToString() + " (Singleton)";
+                    DontDestroyOnLoad(singletonObject);
+                }
+            }
+            return instance;
+        }
+    }
+
     private int customerIndex;
     private List<string> dialogueLines;
     private List<string> middleDialogueLines;
@@ -26,6 +46,19 @@ public class CustomerDialogue : MonoBehaviour
     private CustomerState customerState;
 
     public DialogueState CurrentState { get; private set; } // 현재 대화 상태
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else if (instance != this)
+        {
+            Destroy(gameObject);
+        }
+    }
 
     private void Start()
     {
@@ -51,20 +84,33 @@ public class CustomerDialogue : MonoBehaviour
     /// <summary>
     /// 손님 대화 초기화
     /// </summary>
-    public void Initialize(int index, List<string> dialogueLines, List<string> middleDialogueLines, List<string> clearDialogue, List<string> failDialogue, SpeechBubble speechBubble)
+    public void Initialize(int index, List<string> dialogueLines, List<string> middleDialogueLines,
+    List<string> clearDialogue, List<string> failDialogue, SpeechBubble speechBubble)
     {
         this.customerIndex = index;
         this.dialogueLines = dialogueLines;
         this.middleDialogueLines = middleDialogueLines;
         this.clearDialogue = clearDialogue;
         this.failDialogue = failDialogue;
-        this.speechBubble = speechBubble;
 
-        // SpeechBubble 할당
         if (speechBubble == null)
         {
-            Debug.LogError("SpeechBubble이 할당되지 않았습니다.");
+            // SpeechBubble이 없을 경우 자식 오브젝트에서 찾기
+            this.speechBubble = GetComponentInChildren<SpeechBubble>(true);
+
+            if (this.speechBubble == null)
+            {
+                Debug.LogError($"Customer {index}에 SpeechBubble을 찾을 수 없습니다.");
+                return;
+            }
         }
+        else
+        {
+            this.speechBubble = speechBubble;
+        }
+
+        // SpeechBubble 초기화
+        this.speechBubble.gameObject.SetActive(true);
     }
 
     /// <summary>

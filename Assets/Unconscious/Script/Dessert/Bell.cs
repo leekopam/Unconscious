@@ -5,13 +5,11 @@ using UnityEngine.SceneManagement;
 public class Bell : MonoBehaviour
 {
     private PlayableDirector playableDirector;
-    private CustomerDialogue customerDialogue; // CustomerDialogue 참조
     private bool isPlay = false;
 
     private void Start()
     {
         playableDirector = GetComponent<PlayableDirector>();
-        customerDialogue = FindAnyObjectByType<CustomerDialogue>(); // CustomerDialogue 참조를 찾음
 
         // PlayableDirector가 자동으로 재생되지 않도록 설정
         if (playableDirector != null)
@@ -35,11 +33,11 @@ public class Bell : MonoBehaviour
     /// </summary>
     private void OnPlayableDirectorStopped(PlayableDirector director)
     {
-        if (customerDialogue != null)
+        if (CustomerDialogue.Instance != null)
         {
             // 대화 상태를 중간 상태로 설정
-            customerDialogue.SetDialogueStateToMiddle();
-            customerDialogue.SaveState(); // 상태를 저장
+            CustomerDialogue.Instance.SetDialogueStateToMiddle();
+            CustomerDialogue.Instance.SaveState(); // 상태를 저장
 
             // 씬 전환 정보 저장
             PlayerPrefs.SetString("LastScene", "Dessert");
@@ -53,14 +51,6 @@ public class Bell : MonoBehaviour
             Debug.LogError("CustomerDialogue가 할당되지 않았습니다.");
         }
         isPlay = false; // 애니메이션이 멈췄으므로 isPlay를 false로 설정
-    }
-
-    /// <summary>
-    /// CustomerDialogue 설정
-    /// </summary>
-    public void SetCustomerDialogue(CustomerDialogue dialogue)
-    {
-        customerDialogue = dialogue;
     }
 
     // 마우스 클릭했을때 애니메이션 재생

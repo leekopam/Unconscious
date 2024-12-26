@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Garnish
+  - SpawnPoint
+  - TargetPoint
   layers:
   - Default
   - TransparentFX
