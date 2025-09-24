@@ -33,23 +33,12 @@ public class Bell : MonoBehaviour
     /// </summary>
     private void OnPlayableDirectorStopped(PlayableDirector director)
     {
-        if (CustomerDialogue.Instance != null)
-        {
-            // 대화 상태를 중간 상태로 설정
-            CustomerDialogue.Instance.SetDialogueStateToMiddle();
-            CustomerDialogue.Instance.SaveState(); // 상태를 저장
+        // 씬 전환 정보 저장
+        PlayerPrefs.SetString("LastScene", "Dessert");
+        PlayerPrefs.Save();
 
-            // 씬 전환 정보 저장
-            PlayerPrefs.SetString("LastScene", "Dessert");
-            PlayerPrefs.Save();
-
-            // Order 씬으로 이동
-            SceneManager.LoadScene("Order");
-        }
-        else
-        {
-            Debug.LogError("CustomerDialogue가 할당되지 않았습니다.");
-        }
+        // Order 씬으로 이동
+        SceneManager.LoadScene("Order");
         isPlay = false; // 애니메이션이 멈췄으므로 isPlay를 false로 설정
     }
 
