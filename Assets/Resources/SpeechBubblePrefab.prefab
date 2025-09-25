@@ -146,7 +146,6 @@ GameObject:
   - component: {fileID: 357665813812736589}
   - component: {fileID: 8632432546052243908}
   - component: {fileID: 5713228258225159402}
-  - component: {fileID: 4243528454833137160}
   m_Layer: 5
   m_Name: SpeechBubblePrefab
   m_TagString: Untagged
@@ -212,21 +211,3 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &4243528454833137160
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3957746092214522422}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9511a49f606bd6d4a9f48c948a331b6c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  backgroundImage: {fileID: 5713228258225159402}
-  dialogueText: {fileID: 4068905892426150624}
-  bubbleScale: 0.2
-  textScale: 0.2
-  padding: 10
-  typingSpeed: 0.05
