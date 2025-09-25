@@ -1,14 +1,17 @@
+using DG.Tweening;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
-
 public class Customer : MonoBehaviour
 {
     [HideInInspector]
     public Animator animator;
     public Customer_DialogueData dialogueData;
+    public float typingTime = 1.0f; //타이핑 속도
 
     private ICustomerState currentState;
     private List<GameObject> dialogue_canvas= new List<GameObject>();
+    private int dialogueIndex = 0; //대화 순서 인덱스
 
     void Start()
     {
@@ -62,12 +65,26 @@ public class Customer : MonoBehaviour
             dialogue_canvas[customer_xPos].SetActive(active); //대화창 활성화/비활성화
             if (active)
             {
-                var text = dialogue_canvas[customer_xPos].GetComponentInChildren<TMPro.TextMeshProUGUI>();
+                TextMeshProUGUI text = dialogue_canvas[customer_xPos].GetComponentInChildren<TMPro.TextMeshProUGUI>();
                 if (text != null)
                 {
-                    text.text = message;
+                    text.DOKill(); //이전 애니메이션이 있으면 종료
+                    text.text = "";
+                    text.DOText(message, typingTime).SetEase(Ease.Linear);//대화창에 대사 출력
                 }
             }
         }
-    }   
+    }
+    // 다음 대사로 넘기기  
+    public void NextDialogue()
+    {
+        if(dialogueIndex>dialogueData.lines.FirstLine.Count) return; //대사 인덱스가 범위 밖이면 리턴
+
+        if (dialogueData != null && dialogueData.lines != null && dialogueData.lines.FirstLine.Count > 0)
+        {
+            string message = dialogueData.lines.FirstLine[dialogueIndex];
+            SetDialogueCanvasActive(true, message);
+            dialogueIndex++;// 다음 대사로 인덱스 증가
+        }
+    }
 }

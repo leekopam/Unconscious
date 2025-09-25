@@ -10,7 +10,7 @@ public class SeatedState : ICustomerState
     public void Enter(Customer customer)
     {
         customer.animator.SetInteger("CustomerState", 1);
-        string message = customer.dialogueData.lines.FirstLine; //등장 대사 가져오기
+        string message = customer.dialogueData.lines.FirstLine[0]; //등장 대사 가져오기
         customer.SetDialogueCanvasActive(true, message);
     }
 
