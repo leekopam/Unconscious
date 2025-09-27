@@ -11,8 +11,8 @@ public class Customer : MonoBehaviour
 
     private ICustomerState currentState;
     private List<GameObject> dialogue_canvas= new List<GameObject>();
-    private int dialogueIndex = 0; //대화 순서 인덱스
-
+    public int dialogueIndex = 0; //대화 순서 인덱스
+    
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -80,11 +80,17 @@ public class Customer : MonoBehaviour
     {
         if(dialogueIndex>dialogueData.lines.FirstLine.Count) return; //대사 인덱스가 범위 밖이면 리턴
 
-        if (dialogueData != null && dialogueData.lines != null && dialogueData.lines.FirstLine.Count > 0)
+        if (dialogueData != null && dialogueData.lines != null 
+            && dialogueIndex < dialogueData.lines.FirstLine.Count)
         {
             string message = dialogueData.lines.FirstLine[dialogueIndex];
             SetDialogueCanvasActive(true, message);
             dialogueIndex++;// 다음 대사로 인덱스 증가
+        }
+        else
+        {
+            SetDialogueCanvasActive(false, null); //대화 끝나면 대화창 비활성화
+            Game_Manager.Instance.ChangeSecene("Cocktail");
         }
     }
 }
