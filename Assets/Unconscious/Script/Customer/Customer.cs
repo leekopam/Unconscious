@@ -4,14 +4,13 @@ using TMPro;
 using UnityEngine;
 public class Customer : MonoBehaviour
 {
-    [HideInInspector]
-    public Animator animator;
+    [HideInInspector] public Animator animator;
     public Customer_DialogueData dialogueData;
     public float typingTime = 1.0f; //타이핑 속도
 
     private ICustomerState currentState;
     private List<GameObject> dialogue_canvas= new List<GameObject>();
-    public int dialogueIndex = 0; //대화 순서 인덱스
+    [HideInInspector] public int dialogueIndex = 0; //대화 순서 인덱스
     
     void Start()
     {

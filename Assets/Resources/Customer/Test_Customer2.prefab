@@ -158,8 +158,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 0}
-  dialogueData: {fileID: 11400000, guid: f16edb23ec9fab444999f447cfe93ca3, type: 2}
+  dialogueData: {fileID: 11400000, guid: 1a454b3d7bc8e324386dcc000094b2b6, type: 2}
   typingTime: 1
+  dialogueIndex: 0
 --- !u!114 &4428784799763200250
 MonoBehaviour:
   m_ObjectHideFlags: 0

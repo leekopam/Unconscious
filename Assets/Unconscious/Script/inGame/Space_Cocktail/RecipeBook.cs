@@ -8,7 +8,8 @@ public enum Recipe
     한양의일출,
     명경지수,
     녹색요정,
-   정체불명의음료
+   정체불명의음료,
+   주문없음
 }
 
 public enum MixState

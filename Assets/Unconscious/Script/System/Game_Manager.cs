@@ -72,19 +72,4 @@ public class Game_Manager : MonoBehaviour
         
         SceneManager.LoadScene(sceneName);
     }
-
-    /// <summary>
-    /// 비동기 씬 전환 메서드
-    /// </summary>
-    /// <param name="sceneName">전환할 씬 이름</param>
-    public void ChangeSceneAsync(string sceneName)
-    {
-        // 씬 전환 전 고객 데이터 저장
-        if (CustomerData.Instance != null)
-        {
-            CustomerData.Instance.OnSceneChanging();
-        }
-        
-        SceneManager.LoadSceneAsync(sceneName);
-    }
 }

@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78c59ceadc94e874d9db7a4de7c83673, type: 3}
+  m_Name: CustomerDialogueData_1
+  m_EditorClassIdentifier: 
+  customerName: "\uD14C\uC2A4\uD2B8 \uC190\uB2D81"
+  lines:
+    FirstLine:
+    - Text1Text1Text1Text1Text1Text1
+    - Text2Text2Text2Text2Text2Text2
+    - Text3Text3Text3Text3Text3Text3
+    - Text4Text4Text4Text4Text4Text4
+    - Text5Text5Text5Text5Text5Text5
+    onOrder: 0
+    onCorrectDrink: CorrectCorrectCorrectCorrect
+    onWrongDrink: WrongWrongWrongWrongWrong

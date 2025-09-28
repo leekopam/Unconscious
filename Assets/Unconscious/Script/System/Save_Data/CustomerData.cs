@@ -27,11 +27,15 @@ public class CustomerData : MonoBehaviour
     {
         public string customerName;  // 어떤 고객인지 식별
         public int seatIndex;       // 0: Left, 1: Middle, 2: Right
+        public Recipe orderedDrink; // 고객이 주문한 음료
+        public bool hasOrdered;     // 주문했는지 여부
     }
 
     [Header("Seat Data")]
     public bool[] seatStates = new bool[3];      // Left, Middle, Right 좌석 점유 상태
     public string[] customerNames = new string[3]; // 각 좌석에 앉은 고객 이름
+    public Recipe[] orderedDrinks = new Recipe[3]; // 각 좌석의 고객이 주문한 음료
+    public bool[] hasOrderedFlags = new bool[3];  // 각 좌석의 고객이 주문했는지 여부
 
     private void Awake()
     {
@@ -124,6 +128,83 @@ public class CustomerData : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 고객의 주문 음료 정보를 저장
+    /// </summary>
+    public void SaveOrderDrink()
+    {
+        CustomerManager customerManager = CustomerManager.Instance;
+        if (customerManager == null) return;
+
+        // 각 좌석의 고객 주문 정보 저장
+        SaveCustomerOrder(customerManager.leftCustomer, 0);
+        SaveCustomerOrder(customerManager.middleCustomer, 1);
+        SaveCustomerOrder(customerManager.rightCustomer, 2);
+    }
+
+    /// <summary>
+    /// 특정 고객의 주문 정보를 저장하는 헬퍼 메서드
+    /// </summary>
+    /// <param name="customer">고객</param>
+    /// <param name="seatIndex">좌석 인덱스</param>
+    private void SaveCustomerOrder(Customer customer, int seatIndex)
+    {
+        if (customer != null && customer.dialogueData != null && customer.dialogueData.lines != null)
+        {
+            orderedDrinks[seatIndex] = customer.dialogueData.lines.onOrder;
+            hasOrderedFlags[seatIndex] = true;
+            
+            Debug.Log($"고객 {customer.gameObject.name}의 주문이 저장되었습니다: {customer.dialogueData.lines.onOrder}");
+        }
+        else
+        {
+            //orderedDrinks[seatIndex] = default(Recipe);
+            orderedDrinks[seatIndex] = Recipe.주문없음;
+            hasOrderedFlags[seatIndex] = false;
+        }
+    }
+
+    /// <summary>
+    /// 특정 좌석의 고객이 주문한 음료 반환
+    /// </summary>
+    /// <param name="seatIndex">0: Left, 1: Middle, 2: Right</param>
+    /// <returns>주문한 음료</returns>
+    public Recipe GetOrderedDrink(int seatIndex)
+    {
+        if (seatIndex >= 0 && seatIndex < 3)
+            return orderedDrinks[seatIndex];
+        return default(Recipe);
+    }
+
+    /// <summary>
+    /// 특정 좌석의 고객이 주문했는지 확인
+    /// </summary>
+    /// <param name="seatIndex">0: Left, 1: Middle, 2: Right</param>
+    /// <returns>주문했으면 true</returns>
+    public bool HasOrdered(int seatIndex)
+    {
+        if (seatIndex >= 0 && seatIndex < 3)
+            return hasOrderedFlags[seatIndex];
+        return false;
+    }
+
+    /// <summary>
+    /// 고객 이름으로 주문 정보 가져오기
+    /// </summary>
+    /// <param name="customerName">고객 이름</param>
+    /// <returns>주문 정보 (주문한 음료, 주문 여부)</returns>
+    public (Recipe orderedDrink, bool hasOrdered) GetOrderInfoByCustomerName(string customerName)
+    {
+        for (int i = 0; i < customerNames.Length; i++)
+        {
+            if (customerNames[i] == customerName)
+            {
+                return (orderedDrinks[i], hasOrderedFlags[i]);
+            }
+        }
+        return (default(Recipe), false);
+    }
+
     #region 씬 전환 시 호출할 메서드
 
     /// <summary>
@@ -132,6 +213,7 @@ public class CustomerData : MonoBehaviour
     public void OnSceneChanging()
     {
         SaveSeatData();
+        SaveOrderDrink(); // 주문 정보도 함께 저장
     }
 
     /// <summary>
@@ -176,7 +258,7 @@ public class CustomerData : MonoBehaviour
     public void ManualSave()
     {
         SaveSeatData();
-        Debug.Log("Seat data manually saved.");
+        SaveOrderDrink();
     }
 
     /// <summary>
@@ -185,7 +267,6 @@ public class CustomerData : MonoBehaviour
     public void ManualRestore()
     {
         RestoreSeatData();
-        Debug.Log("Seat data manually restored.");
     }
 
     #endregion

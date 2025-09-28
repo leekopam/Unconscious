@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 78c59ceadc94e874d9db7a4de7c83673, type: 3}
-  m_Name: CustomerDialogueData
+  m_Name: CustomerDialogueData_2
   m_EditorClassIdentifier: 
   customerName: "\uD14C\uC2A4\uD2B8 \uC190\uB2D81"
   lines:
@@ -20,6 +20,6 @@ MonoBehaviour:
     - Text3Text3Text3Text3Text3Text3
     - Text4Text4Text4Text4Text4Text4
     - Text5Text5Text5Text5Text5Text5
-    onOrder: 0
+    onOrder: 4
     onCorrectDrink: CorrectCorrectCorrectCorrect
     onWrongDrink: WrongWrongWrongWrongWrong
