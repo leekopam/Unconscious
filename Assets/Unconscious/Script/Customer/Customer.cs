@@ -78,9 +78,9 @@ public class Customer : MonoBehaviour
     // 다음 대사로 넘기기  
     public void NextDialogue()
     {
-        if(dialogueIndex>dialogueData.lines.FirstLine.Count) return; //대사 인덱스가 범위 밖이면 리턴
+        if (dialogueIndex > dialogueData.lines.FirstLine.Count) return; //대사 인덱스가 범위 밖이면 리턴
 
-        if (dialogueData != null && dialogueData.lines != null 
+        if (dialogueData != null && dialogueData.lines != null
             && dialogueIndex < dialogueData.lines.FirstLine.Count)
         {
             string message = dialogueData.lines.FirstLine[dialogueIndex];

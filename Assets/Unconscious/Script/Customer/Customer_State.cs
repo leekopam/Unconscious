@@ -10,8 +10,7 @@ public class SeatedState : ICustomerState
     public void Enter(Customer customer)
     {
         customer.animator.SetInteger("CustomerState", 1);
-        string message = customer.dialogueData.lines.FirstLine[0]; //등장 대사 가져오기
-        customer.SetDialogueCanvasActive(true, message);
+        customer.SetDialogueCanvasActive(true, "...");
     }
 
     public void Update(Customer customer)
@@ -57,6 +56,6 @@ public class ExitState : ICustomerState
 
     public void Exit(Customer customer)
     {
-        
+        CustomerManager.Instance.EndDialogue();//나머지 손님 Dialogue 버튼 활성화
     }
 }
