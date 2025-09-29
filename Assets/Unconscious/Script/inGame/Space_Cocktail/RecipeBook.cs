@@ -8,7 +8,7 @@ public enum Recipe
     한양의일출,
     명경지수,
     녹색요정,
-   정체불명의음료,
+    실패음료,
    주문없음
 }
 
@@ -64,7 +64,7 @@ public class RecipeBook : MonoBehaviour
         }
         else
         {
-            return Recipe.정체불명의음료; // 해당하는 레시피가 없을 경우 null 반환
+            return Recipe.실패음료; // 해당하는 레시피가 없을 경우 null 반환
         }
     }
 }

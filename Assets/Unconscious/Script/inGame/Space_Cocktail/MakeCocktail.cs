@@ -120,6 +120,9 @@ public class MakeCocktail : MonoBehaviour
             $"쓴맛: {bitterness}, " +
             $"향의 종류: {flavorType}, " +
             $"향의 세기: {flavorIntensity}");
+
+        // 재료가 추가될 때마다 CocktailData 업데이트
+        CocktailData.Instance.UpdateCurrentCocktail(this);
     }
 
     public void SetMixState(MixState mixState)
@@ -143,15 +146,13 @@ public class MakeCocktail : MonoBehaviour
 
     public void SetMixStateLayer()
     {
-        //Layer외 기법을 상용하면 그냥 완성버튼
+        //Layer는 따로 누르면 그냥 완성버튼
         if (!IsTechnic)
         {
             SetMixState(MixState.Layer);
         }
         
         CalculateCoktail();
-        
-        
     }
 
     public void CalculateCoktail()
@@ -164,8 +165,22 @@ public class MakeCocktail : MonoBehaviour
 
         if (alcoholStatuses.Count != 2)
         {
-            Debug.Log("칵테일을 만들기 위해서는 정확히 두 가지 술이 필요합니다.");
+            Debug.Log("칵테일을 만들기 위해서는 정확히 두 개의 술이 필요합니다.");
             return;
+        }
+
+        // 총합 계산 (결과 계산 전에 먼저 계산)
+        totalAlcoholContent = 0;
+        totalSweetness = 0;
+        totalBitterness = 0;
+        totalFlavorIntensity = 0;
+
+        foreach (var alcohol in alcoholStatuses)
+        {
+            totalAlcoholContent += alcohol.AlcoholContent;
+            totalSweetness += alcohol.Sweetness;
+            totalBitterness += alcohol.Bitterness;
+            totalFlavorIntensity += alcohol.FlavorIntensity;
         }
 
         AlcoholStatus alcohol1 = alcoholStatuses[0];
@@ -178,6 +193,9 @@ public class MakeCocktail : MonoBehaviour
             alcohol2.Bitterness, alcohol2.Flavor, alcohol2.FlavorIntensity,
             currentMixState);
 
+        // CocktailData에 제조 완료된 칵테일 정보 저장
+        CocktailData.Instance.SaveCompletedCocktail(this, result);
+
         if (result.HasValue)
         {
             Debug.Log($"완성된 칵테일: {result.Value}");
@@ -186,15 +204,7 @@ public class MakeCocktail : MonoBehaviour
         }
         else
         {
-            Debug.Log("알려진 레시피가 없는 조합입니다.");
-        }
-
-        foreach (var alcohol in alcoholStatuses)
-        {
-            totalAlcoholContent += alcohol.AlcoholContent;
-            totalSweetness += alcohol.Sweetness;
-            totalBitterness += alcohol.Bitterness;
-            totalFlavorIntensity += alcohol.FlavorIntensity;
+            Debug.Log("알려진 레시피가 아닌 조합입니다.");
         }
     }
 
@@ -203,4 +213,12 @@ public class MakeCocktail : MonoBehaviour
         alcoholStatuses.Clear();
         Debug.Log("술 목록이 초기화되었습니다.");
     }
+
+    // CocktailData에서 접근할 수 있도록 public 프로퍼티들 추가
+    public MixState GetCurrentMixState() => currentMixState;
+    public List<AlcoholStatus> GetAlcoholStatuses() => new List<AlcoholStatus>(alcoholStatuses);
+    public int GetTotalAlcoholContent() => totalAlcoholContent;
+    public int GetTotalSweetness() => totalSweetness;
+    public int GetTotalBitterness() => totalBitterness;
+    public int GetTotalFlavorIntensity() => totalFlavorIntensity;
 }

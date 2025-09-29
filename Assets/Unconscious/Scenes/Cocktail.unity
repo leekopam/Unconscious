@@ -477,12 +477,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 87925748}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -66.07825, y: 210.50586, z: 582.5243}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 545255739}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &87925750
 MonoBehaviour:
@@ -493,10 +493,28 @@ MonoBehaviour:
   m_GameObject: {fileID: 87925748}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd49dd74a634d984ca5b4bde9899c968, type: 3}
+  m_Script: {fileID: 11500000, guid: dfb9cbd2fa2c6404f81bd367a8177c6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  customerSaveList: []
+  cocktailHistory: []
+  currentCocktail:
+    cocktailRecipe: 0
+    mixMethod: 0
+    ingredients: []
+    totalAlcoholContent: 0
+    totalSweetness: 0
+    totalBitterness: 0
+    totalFlavorIntensity: 0
+    isSuccessful: 0
+  lastCompletedCocktail:
+    cocktailRecipe: 0
+    mixMethod: 0
+    ingredients: []
+    totalAlcoholContent: 0
+    totalSweetness: 0
+    totalBitterness: 0
+    totalFlavorIntensity: 0
+    isSuccessful: 0
 --- !u!1 &94426585
 GameObject:
   m_ObjectHideFlags: 0
@@ -844,7 +862,7 @@ MonoBehaviour:
     IsHidden: 0
   - Type: 0
     Name: 
-    GameObject: {fileID: 744740705}
+    GameObject: {fileID: 0}
     Ordinal: 15
     Priority: 0
     IconType: 139120
@@ -3842,8 +3860,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1992683003}
-  - {fileID: 87925749}
-  - {fileID: 744740706}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &552772804
@@ -5449,51 +5465,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 59a39e9818cf25c49af8691eb39ea9da, type: 3}
---- !u!1 &744740705
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 744740706}
-  - component: {fileID: 744740707}
-  m_Layer: 0
-  m_Name: Debug
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &744740706
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 744740705}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 545255739}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &744740707
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 744740705}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 798e289e72bc4db498fb6989b78d9ebe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  showCustomerDataInfo: 0
 --- !u!1 &760758236
 GameObject:
   m_ObjectHideFlags: 0
@@ -12891,3 +12862,4 @@ SceneRoots:
   - {fileID: 113659909}
   - {fileID: 1279807711}
   - {fileID: 545255739}
+  - {fileID: 87925749}
