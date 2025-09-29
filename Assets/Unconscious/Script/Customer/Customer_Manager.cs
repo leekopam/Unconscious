@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class CustomerManager : MonoBehaviour
@@ -39,15 +40,18 @@ public class CustomerManager : MonoBehaviour
 
     void Start()
     {
-        GameObject dialogueParent = GameObject.Find("Canvas/Canvas_Dialogue");
-        //예외처리
-        if(seat_Left == null) seat_Left = dialogueParent.transform.Find("seat_Left").GetComponent<Button>();
-        if (seat_Middle == null) seat_Middle = dialogueParent.transform.Find("seat_Middle").GetComponent<Button>();
-        if (seat_Right == null) seat_Right = dialogueParent.transform.Find("seat_Right").GetComponent<Button>();
+        if (SceneManager.GetActiveScene().name == "Order") // Order 씬에서만 버튼을 찾도록 변경
+        {
+            GameObject dialogueParent = GameObject.Find("Canvas/Canvas_Dialogue");
+            if (seat_Left == null) seat_Left = dialogueParent.transform.Find("seat_Left").GetComponent<Button>();
+            if (seat_Middle == null) seat_Middle = dialogueParent.transform.Find("seat_Middle").GetComponent<Button>();
+            if (seat_Right == null) seat_Right = dialogueParent.transform.Find("seat_Right").GetComponent<Button>();
 
-        seat_Left.onClick.AddListener(() => StartDialogue(leftCustomer));
-        seat_Middle.onClick.AddListener(() => StartDialogue(middleCustomer));
-        seat_Right.onClick.AddListener(() => StartDialogue(rightCustomer));
+            seat_Left.onClick.AddListener(() => StartDialogue(leftCustomer));
+            seat_Middle.onClick.AddListener(() => StartDialogue(middleCustomer));
+            seat_Right.onClick.AddListener(() => StartDialogue(rightCustomer));
+        }
+       
     }
 
     #region Dialogue 버튼 제어 및 설정
