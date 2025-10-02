@@ -8,10 +8,15 @@ public class Customer : MonoBehaviour
     public Customer_DialogueData dialogueData;
     public float typingTime = 1.0f; //타이핑 속도
 
+    [HideInInspector] public int prefabIndex = -1; //손님 프리팹 인덱스
+
     private ICustomerState currentState;
     private List<GameObject> dialogue_canvas= new List<GameObject>();
     [HideInInspector] public int dialogueIndex = 0; //대화 순서 인덱스
-    
+    private void Awake()
+    {
+        animator = GetComponent<Animator>();
+    }
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -23,6 +28,11 @@ public class Customer : MonoBehaviour
             {
                 dialogue_canvas.Add(child.gameObject);
             }
+        }
+
+        if (currentState == null)
+        {
+            ChangeState(new SeatedState());
         }
     }
     void Update()
@@ -89,6 +99,7 @@ public class Customer : MonoBehaviour
         else
         {
             SetDialogueCanvasActive(false, null); //대화 끝나면 대화창 비활성화
+            state_Taste(); //손님 대기 상태로 전환
             Game_Manager.Instance.ChangeSecene("Cocktail");
         }
     }

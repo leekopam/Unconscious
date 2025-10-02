@@ -160,6 +160,8 @@ MonoBehaviour:
   animator: {fileID: 0}
   dialogueData: {fileID: 11400000, guid: f16edb23ec9fab444999f447cfe93ca3, type: 2}
   typingTime: 1
+  prefabIndex: -1
+  dialogueIndex: 0
 --- !u!114 &4428784799763200250
 MonoBehaviour:
   m_ObjectHideFlags: 0

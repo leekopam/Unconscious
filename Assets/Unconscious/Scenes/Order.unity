@@ -357,6 +357,11 @@ MonoBehaviour:
   - 
   orderedDrinks: 000000000000000000000000
   hasOrderedFlags: 000000
+  customerStates:
+  - 
+  - 
+  - 
+  dialogueIndices: 000000000000000000000000
 --- !u!114 &188288591
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -369,6 +374,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dfb9cbd2fa2c6404f81bd367a8177c6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cocktailHistory: []
+  currentCocktail:
+    cocktailRecipe: 0
+    mixMethod: 0
+    ingredients: []
+    totalAlcoholContent: 0
+    totalSweetness: 0
+    totalBitterness: 0
+    totalFlavorIntensity: 0
+    isSuccessful: 0
+  lastCompletedCocktail:
+    cocktailRecipe: 0
+    mixMethod: 0
+    ingredients: []
+    totalAlcoholContent: 0
+    totalSweetness: 0
+    totalBitterness: 0
+    totalFlavorIntensity: 0
+    isSuccessful: 0
 --- !u!1 &203779792
 GameObject:
   m_ObjectHideFlags: 0
@@ -2936,7 +2960,6 @@ MonoBehaviour:
   Canvas_Customer: {fileID: 844314247}
   customerPrefabs:
   - {fileID: 9080257338166129263, guid: fb613840b375ff44d8008622725ac5a0, type: 3}
-  - {fileID: 9080257338166129263, guid: c93248b5331fb284991f0de1ecdf6b14, type: 3}
   spawnPositions:
   - {x: -25, y: -40, z: -1600}
   - {x: 0, y: -40, z: -1600}

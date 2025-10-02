@@ -37,6 +37,10 @@ public class CustomerData : MonoBehaviour
     public Recipe[] orderedDrinks = new Recipe[3]; // 각 좌석의 고객이 주문한 음료
     public bool[] hasOrderedFlags = new bool[3];  // 각 좌석의 고객이 주문했는지 여부
 
+    [Header("Customer State Data")]
+    public string[] customerStates = new string[3]; // 각 좌석 고객의 현재 상태 (SeatedState, TasteState, ExitState)
+    public int[] dialogueIndices = new int[3];      // 각 좌석 고객의 대화 인덱스
+
     private void Awake()
     {
         if (instance == null)
@@ -88,13 +92,8 @@ public class CustomerData : MonoBehaviour
             spawner.seat_Right = seatStates[2];
         }
 
-        // 필요시 CustomerManager 참조도 복원 가능
         RestoreCustomerReferences();
     }
-
-    /// <summary>
-    /// CustomerManager의 고객 참조 복원
-    /// </summary>
     private void RestoreCustomerReferences()
     {
         CustomerManager customerManager = CustomerManager.Instance;
@@ -165,6 +164,109 @@ public class CustomerData : MonoBehaviour
     }
 
     /// <summary>
+    /// 각 고객의 상태 정보를 저장
+    /// </summary>
+    private void SaveCustomerState()
+    {
+        CustomerManager customerManager = CustomerManager.Instance;
+        if (customerManager == null) return;
+
+        // 각 좌석의 고객 상태 정보 저장
+        SaveIndividualCustomerState(customerManager.leftCustomer, 0);
+        SaveIndividualCustomerState(customerManager.middleCustomer, 1);
+        SaveIndividualCustomerState(customerManager.rightCustomer, 2);
+    }
+
+    /// <summary>
+    /// 특정 고객의 상태 정보를 저장하는 헬퍼 메서드
+    /// </summary>
+    /// <param name="customer">고객</param>
+    /// <param name="seatIndex">좌석 인덱스</param>
+    private void SaveIndividualCustomerState(Customer customer, int seatIndex)
+    {
+        if (customer != null)
+        {
+            // 현재 상태를 문자열로 저장
+            var currentStateField = typeof(Customer).GetField("currentState", 
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            
+            if (currentStateField != null)
+            {
+                var currentState = currentStateField.GetValue(customer);
+                customerStates[seatIndex] = currentState?.GetType().Name ?? "SeatedState";
+            }
+            else
+            {
+                customerStates[seatIndex] = "SeatedState"; // 기본값
+            }
+
+            // 대화 인덱스 저장
+            dialogueIndices[seatIndex] = customer.dialogueIndex;
+            
+            Debug.Log($"고객 {customer.gameObject.name}의 상태가 저장되었습니다: {customerStates[seatIndex]}, 대화 인덱스: {dialogueIndices[seatIndex]}");
+        }
+        else
+        {
+            // 고객이 없는 경우 초기화
+            customerStates[seatIndex] = "";
+            dialogueIndices[seatIndex] = 0;
+        }
+    }
+
+    /// <summary>
+    /// 저장된 고객 상태를 복원
+    /// </summary>
+    public void RestoreCustomerState()
+    {
+        CustomerManager customerManager = CustomerManager.Instance;
+        if (customerManager == null) return;
+
+        // 각 좌석의 고객 상태 복원
+        RestoreIndividualCustomerState(customerManager.leftCustomer, 0);
+        RestoreIndividualCustomerState(customerManager.middleCustomer, 1);
+        RestoreIndividualCustomerState(customerManager.rightCustomer, 2);
+    }
+
+    /// <summary>
+    /// 특정 고객의 상태를 복원하는 헬퍼 메서드
+    /// </summary>
+    /// <param name="customer">고객</param>
+    /// <param name="seatIndex">좌석 인덱스</param>
+    private void RestoreIndividualCustomerState(Customer customer, int seatIndex)
+    {
+        if (customer != null && !string.IsNullOrEmpty(customerStates[seatIndex]))
+        {
+            // 대화 인덱스 복원
+            customer.dialogueIndex = dialogueIndices[seatIndex];
+
+            // 상태 복원
+            ICustomerState stateToRestore = null;
+            switch (customerStates[seatIndex])
+            {
+                case "SeatedState":
+                    stateToRestore = new SeatedState();
+                    break;
+                case "TasteState":
+                    stateToRestore = new TasteState();
+                    break;
+                case "ExitState":
+                    stateToRestore = new ExitState();
+                    break;
+                default:
+                    stateToRestore = new SeatedState(); // 기본값
+                    break;
+            }
+
+            if (stateToRestore != null)
+            {
+                customer.ChangeState(stateToRestore);
+            }
+
+            Debug.Log($"고객 {customer.gameObject.name}의 상태가 복원되었습니다: {customerStates[seatIndex]}, 대화 인덱스: {dialogueIndices[seatIndex]}");
+        }
+    }
+
+    /// <summary>
     /// 특정 좌석의 고객이 주문한 음료 반환
     /// </summary>
     /// <param name="seatIndex">0: Left, 1: Middle, 2: Right</param>
@@ -188,23 +290,6 @@ public class CustomerData : MonoBehaviour
         return false;
     }
 
-    /// <summary>
-    /// 고객 이름으로 주문 정보 가져오기
-    /// </summary>
-    /// <param name="customerName">고객 이름</param>
-    /// <returns>주문 정보 (주문한 음료, 주문 여부)</returns>
-    public (Recipe orderedDrink, bool hasOrdered) GetOrderInfoByCustomerName(string customerName)
-    {
-        for (int i = 0; i < customerNames.Length; i++)
-        {
-            if (customerNames[i] == customerName)
-            {
-                return (orderedDrinks[i], hasOrderedFlags[i]);
-            }
-        }
-        return (default(Recipe), false);
-    }
-
     #region 씬 전환 시 호출할 메서드
 
     /// <summary>
@@ -214,6 +299,7 @@ public class CustomerData : MonoBehaviour
     {
         SaveSeatData();
         SaveOrderDrink(); // 주문 정보도 함께 저장
+        SaveCustomerState(); // 고객 상태 정보 저장
     }
 
     /// <summary>
@@ -222,51 +308,7 @@ public class CustomerData : MonoBehaviour
     public void OnSceneLoaded()
     {
         RestoreSeatData();
-    }
-
-    #endregion
-
-    #region 퍼블릭 접근 메서드
-
-    /// <summary>
-    /// 특정 좌석에 고객이 앉아있는지 확인
-    /// </summary>
-    /// <param name="seatIndex">0: Left, 1: Middle, 2: Right</param>
-    /// <returns></returns>
-    public bool IsSeatOccupied(int seatIndex)
-    {
-        if (seatIndex >= 0 && seatIndex < 3)
-            return seatStates[seatIndex];
-        return false;
-    }
-
-    /// <summary>
-    /// 특정 좌석의 고객 이름 반환
-    /// </summary>
-    /// <param name="seatIndex">0: Left, 1: Middle, 2: Right</param>
-    /// <returns></returns>
-    public string GetCustomerAtSeat(int seatIndex)
-    {
-        if (seatIndex >= 0 && seatIndex < 3)
-            return customerNames[seatIndex];
-        return "";
-    }
-
-    /// <summary>
-    /// 좌석 데이터 수동 저장
-    /// </summary>
-    public void ManualSave()
-    {
-        SaveSeatData();
-        SaveOrderDrink();
-    }
-
-    /// <summary>
-    /// 좌석 데이터 수동 복원
-    /// </summary>
-    public void ManualRestore()
-    {
-        RestoreSeatData();
+        RestoreCustomerState(); // 고객 상태 정보 복원
     }
 
     #endregion

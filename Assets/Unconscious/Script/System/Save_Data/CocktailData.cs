@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Collections;
 using UnityEngine;
 
 public class CocktailData : MonoBehaviour
@@ -57,8 +58,8 @@ public class CocktailData : MonoBehaviour
 
     [Header("Cocktail Manufacturing Data")]
     public List<CocktailInfo> cocktailHistory = new List<CocktailInfo>(); // 제조 이력
-    public CocktailInfo currentCocktail;        // 현재 제조 중인 칵테일
-    public CocktailInfo lastCompletedCocktail;  // 마지막으로 완성한 칵테일
+    [ReadOnly] public CocktailInfo currentCocktail;        // 현재 제조 중인 칵테일
+    [ReadOnly] public CocktailInfo lastCompletedCocktail;  // 마지막으로 완성한 칵테일
 
     private void Awake()
     {
