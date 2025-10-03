@@ -9,10 +9,6 @@ public class SeatedState : ICustomerState
 {
     public void Enter(Customer customer)
     {
-        if(customer.animator != null)
-        {
-            customer.animator.SetBool("SpawnState", true);
-        }
         customer.SetDialogueCanvasActive(true, "...");
     }
 
@@ -38,7 +34,7 @@ public class TasteState : ICustomerState
 
         string message_Correct = customer.dialogueData.lines.onCorrectDrink;
         string message_Wrong = customer.dialogueData.lines.onWrongDrink;
-        customer.SetDialogueCanvasActive(true, null); //대기 상태에서는 대사 없음
+        customer.SetDialogueCanvasActive(true, message_Correct); //대기 상태에서는 대사 없음
     }
 
     public void Update(Customer customer)

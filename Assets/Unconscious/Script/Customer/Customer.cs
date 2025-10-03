@@ -29,11 +29,6 @@ public class Customer : MonoBehaviour
                 dialogue_canvas.Add(child.gameObject);
             }
         }
-
-        if (currentState == null)
-        {
-            ChangeState(new SeatedState());
-        }
     }
     void Update()
     {
