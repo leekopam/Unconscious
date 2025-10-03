@@ -13,6 +13,14 @@ public class Customer : MonoBehaviour
     private ICustomerState currentState;
     private List<GameObject> dialogue_canvas= new List<GameObject>();
     [HideInInspector] public int dialogueIndex = 0; //대화 순서 인덱스
+
+    #region 상태 확인 메서드들
+    public bool IsSeated() => currentState is SeatedState;
+    public bool IsTasting() => currentState is TasteState;
+    public bool IsExiting() => currentState is ExitState;
+    public string GetCurrentStateName() => currentState?.GetType().Name ?? "None";
+    #endregion
+    
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -52,7 +60,8 @@ public class Customer : MonoBehaviour
         currentState.Enter(this);
     }
     #endregion
-
+    #region 대화 기능
+    
     // 대화 캔버스 활성화/비활성화 메서드
     public void SetDialogueCanvasActive(bool active, string message )
     {
@@ -94,8 +103,14 @@ public class Customer : MonoBehaviour
         else
         {
             SetDialogueCanvasActive(false, null); //대화 끝나면 대화창 비활성화
-            state_Taste(); //손님 대기 상태로 전환
-            Game_Manager.Instance.ChangeSecene("Cocktail");
+            // 손님이 착석 상태일 때만 씬 전환
+            if (IsSeated())
+            {
+                state_Taste(); //손님 대기 상태로 전환
+                Game_Manager.Instance.ChangeSecene("Cocktail");
+                dialogueIndex = 0;
+            }
         }
     }
+    #endregion
 }

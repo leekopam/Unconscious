@@ -74,7 +74,24 @@ public class CustomerManager : MonoBehaviour
         // 다른 버튼들 비활성화
         DisableOtherButtons(customer);
 
-        // 대화 진행
+        if (customer.IsTasting())
+        {
+            // Customer의 현재 상태가 TasteState인지 확인하고 OnDialogueClicked 호출
+            var currentStateField = typeof(Customer).GetField("currentState",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+            if (currentStateField != null)
+            {
+                var currentState = currentStateField.GetValue(customer);
+                if (currentState is TasteState tasteState)
+                {
+                    tasteState.OnDialogueClicked(customer);
+                    return; // VerifyDrink 실행 후 일반 대화 진행하지 않음
+                }
+            }
+        }
+
+        // 대화 진행 (TasteState가 아닌 경우에만)
         customer.NextDialogue();
     }
 

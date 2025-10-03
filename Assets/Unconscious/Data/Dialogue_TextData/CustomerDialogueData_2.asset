@@ -21,5 +21,6 @@ MonoBehaviour:
     - Text4Text4Text4Text4Text4Text4
     - Text5Text5Text5Text5Text5Text5
     onOrder: 4
+    onTasteDrink: WaitingWaitingWaitingWaitingWaitingWaitingWaitingWaiting
     onCorrectDrink: CorrectCorrectCorrectCorrect
     onWrongDrink: WrongWrongWrongWrongWrong
