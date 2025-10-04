@@ -28,6 +28,7 @@ public class TasteState : ICustomerState
     string message_Correct;
     string message_Wrong;
     private bool hasVerified = false; // 음료 먹었는지 확인여부
+    private bool isWaitingForExit = false; // 검증 완료 후 퇴장 대기 상태
 
     public void Enter(Customer customer)
     {
@@ -42,6 +43,7 @@ public class TasteState : ICustomerState
         customer.SetDialogueCanvasActive(true, message_Waiting);
 
         hasVerified = false;
+        isWaitingForExit = false;
     }
 
     public void Update(Customer customer)
@@ -64,6 +66,13 @@ public class TasteState : ICustomerState
         {
             VerifyDrink(customer, message_Correct, message_Wrong);
             hasVerified = true;
+            isWaitingForExit = true;
+        }
+        else if (isWaitingForExit)
+        {
+            // 검증 후 퇴장 상태로 전환
+            customer.state_Exit();
+            isWaitingForExit = false;
         }
     }
 
@@ -121,9 +130,9 @@ public class ExitState : ICustomerState
     {
         if (customer.animator != null)
         {
-            customer.animator.SetTrigger("CustomerExit");
+            customer.animator.SetBool("CustomerExit", true);
         }
-        customer.SetDialogueCanvasActive(true, null);
+        //customer.SetDialogueCanvasActive(true, null); //퇴장 대사 필요하면 사용
     }
 
     public void Update(Customer customer)
@@ -133,8 +142,8 @@ public class ExitState : ICustomerState
 
     public void Exit(Customer customer)
     {
+        customer.animator.SetBool("CustomerExit", false);
         CustomerManager.Instance.EndDialogue();//나머지 손님 Dialogue 버튼 활성화
-
         Customer_Spawner spawner = Customer_Spawner.FindObjectOfType<Customer_Spawner>();
         if (spawner != null && customer.prefabIndex>0)
         {
