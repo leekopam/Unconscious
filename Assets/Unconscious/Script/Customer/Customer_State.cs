@@ -36,6 +36,8 @@ public class TasteState : ICustomerState
         {
             customer.animator.SetBool("OrderState", true);
         }
+        CustomerManager.Instance.DisableOtherButtons(customer); //다른 손님 버튼 비활성화
+
         message_Correct = customer.dialogueData.lines.onCorrectDrink;
         message_Wrong = customer.dialogueData.lines.onWrongDrink;
 

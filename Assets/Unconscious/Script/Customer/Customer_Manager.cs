@@ -108,7 +108,7 @@ public class CustomerManager : MonoBehaviour
     /// 특정 손님을 제외한 나머지 버튼들을 비활성화합니다.
     /// </summary>
     /// <param name="activeCustomer">활성화 상태를 유지할 손님</param>
-    private void DisableOtherButtons(Customer activeCustomer)
+    public void DisableOtherButtons(Customer activeCustomer)
     {
         if (activeCustomer != leftCustomer && leftCustomer != null)
             seat_Left.interactable = false;
@@ -128,24 +128,6 @@ public class CustomerManager : MonoBehaviour
         if (leftCustomer != null) seat_Left.interactable = true;
         if (middleCustomer != null) seat_Middle.interactable = true;
         if (rightCustomer != null) seat_Right.interactable = true;
-    }
-
-    /// <summary>
-    /// 현재 대화 중인 손님을 반환합니다.
-    /// </summary>
-    public Customer GetCurrentTalkingCustomer()
-    {
-        return currentTalkingCustomer;
-    }
-
-    /// <summary>
-    /// 특정 손님이 현재 대화 중인지 확인합니다.
-    /// </summary>
-    /// <param name="customer">확인할 손님</param>
-    /// <returns>대화 중이면 true, 아니면 false</returns>
-    public bool IsCustomerTalking(Customer customer)
-    {
-        return currentTalkingCustomer == customer;
     }
 
     public void Set_LeftCustomer(Customer customer) { leftCustomer = customer.GetComponent<Customer>(); }
