@@ -112,6 +112,7 @@ public class Customer_Spawner : MonoBehaviour
         }
     }
 
+    // 저장된 손님 데이터를 불러와 복원하는 메서드
     private void Load_customerData()
     {
         // CustomerData 인스턴스 가져오기

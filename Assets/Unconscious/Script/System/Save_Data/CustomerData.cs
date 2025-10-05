@@ -243,8 +243,15 @@ public class CustomerData : MonoBehaviour
             ICustomerState stateToRestore = null;
             switch (customerStates[seatIndex])
             {
+                default:
+                    stateToRestore = new SeatedState(); // 기본값
+                    break;
+
                 case "SeatedState":
                     stateToRestore = new SeatedState();
+                    break;
+                case "WaitingState":
+                    stateToRestore = new WaitingState();
                     break;
                 case "TasteState":
                     stateToRestore = new TasteState();
@@ -252,9 +259,7 @@ public class CustomerData : MonoBehaviour
                 case "ExitState":
                     stateToRestore = new ExitState();
                     break;
-                default:
-                    stateToRestore = new SeatedState(); // 기본값
-                    break;
+                
             }
 
             if (stateToRestore != null)

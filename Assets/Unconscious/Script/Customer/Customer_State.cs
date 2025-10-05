@@ -20,6 +20,27 @@ public class SeatedState : ICustomerState
     public void Exit(Customer customer)
     {
         customer.animator.SetBool("SpawnState", false);
+        
+    }
+}
+// 손님 대기 상태 (생성될때 애니메이션 사용하지 않고 바로 자리에 있는 상태로 유지)
+public class WaitingState : ICustomerState
+{
+    public void Enter(Customer customer)
+    {
+        if (customer.animator != null)
+        {
+            customer.animator.SetBool("WaitingState", true);
+        }
+        customer.SetDialogueCanvasActive(true, "...");
+    }
+    public void Update(Customer customer)
+    {
+        
+    }
+    public void Exit(Customer customer)
+    {
+        customer.animator.SetBool("WaitingState", false);
         customer.SetDialogueCanvasActive(false, null);
     }
 }

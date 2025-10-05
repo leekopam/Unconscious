@@ -16,6 +16,7 @@ public class Customer : MonoBehaviour
 
     #region 상태 확인 메서드들
     public bool IsSeated() => currentState is SeatedState;
+    public bool IsWating() => currentState is WaitingState; //주문은 받지 않았지만 생성은 된 상태
     public bool IsTasting() => currentState is TasteState;
     public bool IsExiting() => currentState is ExitState;
     public string GetCurrentStateName() => currentState?.GetType().Name ?? "None";
@@ -48,10 +49,10 @@ public class Customer : MonoBehaviour
     }
 
     #region 상태전환 기능
-
     // 외부에서 상태 전환을 호출하는 예시 메서드
     public void state_Sitting() => ChangeState(new SeatedState()); //손님 착석
-    public void state_Taste() => ChangeState(new TasteState()); //손님 대기(주문하고 다른씬 갔다가 돌아옴)
+    public void state_Waiting() => ChangeState(new WaitingState()); //손님 대기(주문하고 다른씬 갔다가 돌아옴)
+    public void state_Taste() => ChangeState(new TasteState()); // 주문받은 손님 대기상태 및 음료 검증
     public void state_Exit() => ChangeState(new ExitState());  //손님 퇴장
     public void ChangeState(ICustomerState newState)
     {
@@ -107,9 +108,32 @@ public class Customer : MonoBehaviour
             if (IsSeated())
             {
                 state_Taste(); //손님 대기 상태로 전환
+                SetOtherCustomersToWaiting();
                 Game_Manager.Instance.ChangeSecene("Cocktail");
                 dialogueIndex = 0;
             }
+        }
+    }
+    // 주문한 손님을 제외한 나머지 손님들을 Waiting 상태로 전환
+    private void SetOtherCustomersToWaiting()
+    {
+        CustomerManager manager = CustomerManager.Instance;
+        if (manager == null) return;
+
+        // 좌석의 손님들을 확인하고 현재 손님이 아니면 Waiting 상태로 전환
+        if (manager.leftCustomer != null && manager.leftCustomer != this && manager.leftCustomer.IsSeated())
+        {
+            manager.leftCustomer.state_Waiting();
+        }
+
+        if (manager.middleCustomer != null && manager.middleCustomer != this && manager.middleCustomer.IsSeated())
+        {
+            manager.middleCustomer.state_Waiting();
+        }
+
+        if (manager.rightCustomer != null && manager.rightCustomer != this && manager.rightCustomer.IsSeated())
+        {
+            manager.rightCustomer.state_Waiting();
         }
     }
     #endregion
