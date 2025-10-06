@@ -33,11 +33,6 @@ public class CustomerManager : MonoBehaviour
     // 현재 대화 중인 손님을 추적하는 변수
     private Customer currentTalkingCustomer = null;
 
-    private void Awake()
-    {
-        
-    }
-
     void Start()
     {
         if (SceneManager.GetActiveScene().name == "Order") // Order 씬에서만 버튼을 찾도록 변경

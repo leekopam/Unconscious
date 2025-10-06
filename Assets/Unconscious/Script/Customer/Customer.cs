@@ -38,6 +38,10 @@ public class Customer : MonoBehaviour
                 dialogue_canvas.Add(child.gameObject);
             }
         }
+
+
+        RandDrinkOrder();
+        
     }
     void Update()
     {
@@ -137,4 +141,15 @@ public class Customer : MonoBehaviour
         }
     }
     #endregion
+    #region 주문기능
+private void RandDrinkOrder()
+{
+    // dialogueData가 있으면 매번 새로운 랜덤 레시피 할당
+    if (dialogueData != null && dialogueData.lines != null)
+    {
+        dialogueData.lines.onOrder = RecipeBook.GetRandomOrderableRecipe();
+        Debug.Log($"{gameObject.name}의 주문이 랜덤으로 설정되었습니다: {dialogueData.lines.onOrder}");
+    }
+}
+#endregion
 }
