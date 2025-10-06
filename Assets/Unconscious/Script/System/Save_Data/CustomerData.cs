@@ -5,6 +5,7 @@ public class CustomerData : MonoBehaviour
     private static CustomerData instance;
     public static CustomerData Instance
     {
+        // monobehavior을 상속받기 때문에 DontDestroyOnLoad을 사용하여 씬 젼한시에도 데이터 유지
         get
         {
             if (instance == null)
@@ -46,7 +47,7 @@ public class CustomerData : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(this.gameObject);
         }
         else if (instance != this)
         {
@@ -314,6 +315,7 @@ public class CustomerData : MonoBehaviour
     {
         RestoreSeatData();
         RestoreCustomerState(); // 고객 상태 정보 복원
+
     }
 
     #endregion

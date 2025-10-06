@@ -105,7 +105,7 @@ public class Customer : MonoBehaviour
         {
             SetDialogueCanvasActive(false, null); //대화 끝나면 대화창 비활성화
             // 손님이 착석 상태일 때만 씬 전환
-            if (IsSeated())
+            if (IsSeated() || IsWating())
             {
                 state_Taste(); //손님 대기 상태로 전환
                 SetOtherCustomersToWaiting();

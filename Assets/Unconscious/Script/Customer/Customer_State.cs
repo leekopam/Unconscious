@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public interface ICustomerState
 {
     void Enter(Customer customer);
@@ -50,6 +52,7 @@ public class TasteState : ICustomerState
     string message_Wrong;
     private bool hasVerified = false; // 음료 먹었는지 확인여부
     private bool isWaitingForExit = false; // 검증 완료 후 퇴장 대기 상태
+    public int Reward_Gold = 10;
 
     public void Enter(Customer customer)
     {
@@ -136,6 +139,7 @@ public class TasteState : ICustomerState
         {
             customer.SetDialogueCanvasActive(true, message_Correct);
             UnityEngine.Debug.Log($"고객 {customer.gameObject.name}: 주문한 음료와 일치! ({orderedDrink})");
+            RewardData.Instance.AddGold(Reward_Gold); // 골드 보상 추가
         }
         else
         {
@@ -149,26 +153,40 @@ public class TasteState : ICustomerState
 }
 public class ExitState : ICustomerState
 {
+    private bool hasExecuted = false; // 퇴장 로직이 한 번만 실행되도록 확인하는 변수
     public void Enter(Customer customer)
     {
         if (customer.animator != null)
         {
             customer.animator.SetBool("CustomerExit", true);
         }
+        hasExecuted = false;
         //customer.SetDialogueCanvasActive(true, null); //퇴장 대사 필요하면 사용
     }
 
     public void Update(Customer customer)
     {
-        
+        if (!hasExecuted && customer.animator != null)
+        {
+            AnimatorStateInfo stateInfo = customer.animator.GetCurrentAnimatorStateInfo(0);
+            if (stateInfo.IsName("Customer_Exit") && stateInfo.normalizedTime >=  0.95f)
+            {
+                ExecuteLogic(customer);
+                hasExecuted = true;
+            }
+        }
     }
 
     public void Exit(Customer customer)
     {
         customer.animator.SetBool("CustomerExit", false);
+    }
+
+    private void ExecuteLogic(Customer customer)
+    {
         CustomerManager.Instance.EndDialogue();//나머지 손님 Dialogue 버튼 활성화
         Customer_Spawner spawner = Customer_Spawner.FindObjectOfType<Customer_Spawner>();
-        if (spawner != null && customer.prefabIndex>0)
+        if (spawner != null && customer.prefabIndex >= 0)
         {
             spawner.ReleasePrefabIndex(customer.prefabIndex);
 
@@ -188,6 +206,9 @@ public class ExitState : ICustomerState
                 spawner.seat_Right = false;
                 CustomerManager.Instance.rightCustomer = null;
             }
+
+            // 볼일끝난 손님 오브젝트 제거
+            GameObject.Destroy(customer.gameObject);
         }
     }
 }
