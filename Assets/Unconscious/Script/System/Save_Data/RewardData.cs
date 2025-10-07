@@ -1,9 +1,10 @@
-using Unity.Collections;
+ï»¿using Unity.Collections;
 using UnityEngine;
 
 public class RewardData : MonoBehaviour
 {
     private static RewardData instance;
+
     public static RewardData Instance
     {
         get
@@ -18,33 +19,24 @@ public class RewardData : MonoBehaviour
                     DontDestroyOnLoad(obj);
                 }
             }
+
             return instance;
         }
     }
 
-
-    [SerializeField] private int reward_gold; // Ä¬Å×ÀÏ ¼º°ø º¸»ó
+    [SerializeField] private int reward_gold; // í˜„ì¬ ë³´ìœ  ê³¨ë“œ
 
     private void Awake()
     {
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(this.gameObject);
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
             Destroy(gameObject);
         }
-    }
-    void Start()
-    {
-        
-    }
-    
-    void Update()
-    {
-        
     }
 
     public int Reward_Gold
@@ -52,11 +44,11 @@ public class RewardData : MonoBehaviour
         get => reward_gold;
         set
         {
-            reward_gold = Mathf.Max(0, value); // 0 ÀÌÇÏ·Î ³»·Á°¡Áö ¾Êµµ·Ï ¹æÁö
-            reward_gold = value;
-            Debug.Log($"º¸À¯ÁßÀÎ °ñµå ¼ö·®: {value}");  // ·Î±× Ãâ·Â
+            reward_gold = Mathf.Max(0, value); // 0 ì´í•˜ë¡œ ë‚´ë ¤ê°€ì§€ ì•Šë„ë¡ ë°©ì§€
+            Debug.Log($"ë³´ìœ ì¤‘ì¸ ê³¨ë“œ ìˆ˜ëŸ‰: {reward_gold}");
         }
     }
+
     public void AddGold(int amount)
     {
         Reward_Gold += amount;

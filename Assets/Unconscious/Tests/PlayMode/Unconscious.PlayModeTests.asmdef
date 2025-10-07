@@ -1,0 +1,19 @@
+{
+    "name": "Unconscious.PlayModeTests",
+    "rootNamespace": "",
+    "references": [
+        "GUID:0b5ef914e7cb4afe827a102504f3ee45"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false,
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ]
+}

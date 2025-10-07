@@ -1,63 +1,63 @@
-using DG.Tweening;
+ï»¿using DG.Tweening;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+
 public class Customer : MonoBehaviour
 {
     [HideInInspector] public Animator animator;
     public Customer_DialogueData dialogueData;
-    public float typingTime = 1.0f; //Å¸ÀÌÇÎ ¼Óµµ
+    public float typingTime = 1.0f; // íƒ€ì´í•‘ ì†ë„
 
-    [HideInInspector] public int prefabIndex = -1; //¼Õ´Ô ÇÁ¸®ÆÕ ÀÎµ¦½º
+    [HideInInspector] public int prefabIndex = -1; // ì†ë‹˜ í”„ë¦¬íŒ¹ ì¸ë±ìŠ¤
+    [HideInInspector] public int dialogueIndex = 0; // ëŒ€í™” ìˆœì„œ ì¸ë±ìŠ¤
+    [HideInInspector] public int seatIndex = SeatIndex.Unknown;
 
     private ICustomerState currentState;
-    private List<GameObject> dialogue_canvas= new List<GameObject>();
-    [HideInInspector] public int dialogueIndex = 0; //´ëÈ­ ¼ø¼­ ÀÎµ¦½º
+    private readonly List<GameObject> dialogue_canvas = new List<GameObject>();
+    private Recipe currentOrder = Recipe.ì£¼ë¬¸ì—†ìŒ;
 
-    #region »óÅÂ È®ÀÎ ¸Ş¼­µåµé
+    #region ìƒíƒœ í™•ì¸ ë©”ì„œë“œë“¤
     public bool IsSeated() => currentState is SeatedState;
-    public bool IsWating() => currentState is WaitingState; //ÁÖ¹®Àº ¹ŞÁö ¾Ê¾ÒÁö¸¸ »ı¼ºÀº µÈ »óÅÂ
+    public bool IsWating() => currentState is WaitingState; // ì£¼ë¬¸ì€ ë°›ì§€ ì•Šì•˜ì§€ë§Œ ìƒì„±ì€ ëœ ìƒíƒœ
     public bool IsTasting() => currentState is TasteState;
     public bool IsExiting() => currentState is ExitState;
     public string GetCurrentStateName() => currentState?.GetType().Name ?? "None";
+    public Recipe CurrentOrder => currentOrder;
     #endregion
-    
+
     private void Awake()
     {
         animator = GetComponent<Animator>();
     }
-    void Start()
+
+    private void Start()
     {
         animator = GetComponent<Animator>();
 
         GameObject dialogueParent = GameObject.Find("Canvas/Canvas_Dialogue");
-        if(dialogueParent != null)
+        if (dialogueParent != null)
         {
-            foreach(Transform child in dialogueParent.transform)
+            foreach (Transform child in dialogueParent.transform)
             {
                 dialogue_canvas.Add(child.gameObject);
             }
         }
 
-
         RandDrinkOrder();
-        
     }
-    void Update()
-    {
-        
-    }
+
     private void FixedUpdate()
     {
         currentState?.Update(this);
     }
 
-    #region »óÅÂÀüÈ¯ ±â´É
-    // ¿ÜºÎ¿¡¼­ »óÅÂ ÀüÈ¯À» È£ÃâÇÏ´Â ¿¹½Ã ¸Ş¼­µå
-    public void state_Sitting() => ChangeState(new SeatedState()); //¼Õ´Ô Âø¼®
-    public void state_Waiting() => ChangeState(new WaitingState()); //¼Õ´Ô ´ë±â(ÁÖ¹®ÇÏ°í ´Ù¸¥¾À °¬´Ù°¡ µ¹¾Æ¿È)
-    public void state_Taste() => ChangeState(new TasteState()); // ÁÖ¹®¹ŞÀº ¼Õ´Ô ´ë±â»óÅÂ ¹× À½·á °ËÁõ
-    public void state_Exit() => ChangeState(new ExitState());  //¼Õ´Ô ÅğÀå
+    #region ìƒíƒœì „í™˜ ê¸°ëŠ¥
+    public void state_Sitting() => ChangeState(new SeatedState()); // ì†ë‹˜ ì°©ì„
+    public void state_Waiting() => ChangeState(new WaitingState()); // ì†ë‹˜ ëŒ€ê¸°(ì£¼ë¬¸í•˜ê³  ë‹¤ë¥¸ì”¬ ê°”ë‹¤ê°€ ëŒì•„ì˜´)
+    public void state_Taste() => ChangeState(new TasteState()); // ì£¼ë¬¸ë°›ì€ ì†ë‹˜ ëŒ€ê¸°ìƒíƒœ ë° ìŒë£Œ ê²€ì¦
+    public void state_Exit() => ChangeState(new ExitState());  // ì†ë‹˜ í‡´ì¥
+
     public void ChangeState(ICustomerState newState)
     {
         currentState?.Exit(this);
@@ -65,66 +65,102 @@ public class Customer : MonoBehaviour
         currentState.Enter(this);
     }
     #endregion
-    #region ´ëÈ­ ±â´É
-    
-    // ´ëÈ­ Äµ¹ö½º È°¼ºÈ­/ºñÈ°¼ºÈ­ ¸Ş¼­µå
-    public void SetDialogueCanvasActive(bool active, string message )
+
+    #region ëŒ€í™” ê¸°ëŠ¥
+    public void SetDialogueCanvasActive(bool active, string message)
     {
-        // ¼Õ´Ô x ÁÂÇ¥°¡ -1, 0, 1 ÀÏ¶§ °¢°¢ 2(ÁÂ), 1(Áß), 0(¿ì) ´ëÈ­Ã¢À» È°¼ºÈ­
-        int customer_xPos = (int)transform.position.x switch
-        {   
-            1 => 0,
-            0 => 1,
-            -1 => 2,
-            _ => -1 // ¹üÀ§ ¹ÛÀÏ ¶§´Â -1·Î ¼³Á¤
-        };
-        if (customer_xPos >= 0 && customer_xPos < dialogue_canvas.Count) 
-        { 
-            dialogue_canvas[customer_xPos].SetActive(active); //´ëÈ­Ã¢ È°¼ºÈ­/ºñÈ°¼ºÈ­
-            if (active)
-            {
-                TextMeshProUGUI text = dialogue_canvas[customer_xPos].GetComponentInChildren<TMPro.TextMeshProUGUI>();
-                if (text != null)
-                {
-                    text.DOKill(); //ÀÌÀü ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ÀÖÀ¸¸é Á¾·á
-                    text.text = "";
-                    text.DOText(message, typingTime).SetEase(Ease.Linear);//´ëÈ­Ã¢¿¡ ´ë»ç Ãâ·Â
-                }
-            }
+        int dialogueCanvasIndex = GetDialogueCanvasIndex();
+        if (dialogueCanvasIndex < 0 || dialogueCanvasIndex >= dialogue_canvas.Count)
+        {
+            return;
         }
+
+        GameObject targetCanvas = dialogue_canvas[dialogueCanvasIndex];
+        targetCanvas.SetActive(active);
+        if (!active)
+        {
+            return;
+        }
+
+        TextMeshProUGUI text = targetCanvas.GetComponentInChildren<TextMeshProUGUI>();
+        if (text == null)
+        {
+            return;
+        }
+
+        text.DOKill();
+        text.text = "";
+
+        if (string.IsNullOrEmpty(message))
+        {
+            return;
+        }
+
+        int messageLength = message.Length;
+        DOTween.To(
+            () => 0f,
+            value =>
+            {
+                int visibleLength = Mathf.Clamp(Mathf.FloorToInt(value), 0, messageLength);
+                text.text = message.Substring(0, visibleLength);
+            },
+            messageLength,
+            typingTime
+        ).SetEase(Ease.Linear);
     }
-    // ´ÙÀ½ ´ë»ç·Î ³Ñ±â±â  
+
+    // ë²„íŠ¼ í´ë¦­ ì‹œ í˜¸ì¶œ
+    public void OnDialogueClicked()
+    {
+        if (currentState is TasteState tasteState)
+        {
+            tasteState.OnDialogueClicked(this);
+            return;
+        }
+
+        NextDialogue();
+    }
+
+    // ë‹¤ìŒ ëŒ€ì‚¬ë¡œ ë„˜ê¸°ê¸°
     public void NextDialogue()
     {
-        if (dialogueIndex > dialogueData.lines.FirstLine.Count) return; //´ë»ç ÀÎµ¦½º°¡ ¹üÀ§ ¹ÛÀÌ¸é ¸®ÅÏ
-
         if (dialogueData != null && dialogueData.lines != null
+            && dialogueData.lines.FirstLine != null
             && dialogueIndex < dialogueData.lines.FirstLine.Count)
         {
             string message = dialogueData.lines.FirstLine[dialogueIndex];
+            message = InsertOrderDialogueText(message);
             SetDialogueCanvasActive(true, message);
-            dialogueIndex++;// ´ÙÀ½ ´ë»ç·Î ÀÎµ¦½º Áõ°¡
+            dialogueIndex++;
+            return;
         }
-        else
+
+        SetDialogueCanvasActive(false, null);
+
+        // ì†ë‹˜ì´ ì°©ì„ ìƒíƒœì¼ ë•Œë§Œ ì”¬ ì „í™˜
+        if (IsSeated() || IsWating())
         {
-            SetDialogueCanvasActive(false, null); //´ëÈ­ ³¡³ª¸é ´ëÈ­Ã¢ ºñÈ°¼ºÈ­
-            // ¼Õ´ÔÀÌ Âø¼® »óÅÂÀÏ ¶§¸¸ ¾À ÀüÈ¯
-            if (IsSeated() || IsWating())
+            state_Taste();
+            SetOtherCustomersToWaiting();
+
+            if (Game_Manager.Instance != null)
             {
-                state_Taste(); //¼Õ´Ô ´ë±â »óÅÂ·Î ÀüÈ¯
-                SetOtherCustomersToWaiting();
-                Game_Manager.Instance.ChangeSecene("Cocktail");
-                dialogueIndex = 0;
+                Game_Manager.Instance.ChangeScene(SceneNames.Cocktail);
             }
+
+            dialogueIndex = 0;
         }
     }
-    // ÁÖ¹®ÇÑ ¼Õ´ÔÀ» Á¦¿ÜÇÑ ³ª¸ÓÁö ¼Õ´ÔµéÀ» Waiting »óÅÂ·Î ÀüÈ¯
+
+    // ì£¼ë¬¸í•œ ì†ë‹˜ì„ ì œì™¸í•œ ë‚˜ë¨¸ì§€ ì†ë‹˜ë“¤ì„ Waiting ìƒíƒœë¡œ ì „í™˜
     private void SetOtherCustomersToWaiting()
     {
-        CustomerManager manager = CustomerManager.Instance;
-        if (manager == null) return;
+        CustomerManager manager = FindObjectOfType<CustomerManager>();
+        if (manager == null)
+        {
+            return;
+        }
 
-        // ÁÂ¼®ÀÇ ¼Õ´ÔµéÀ» È®ÀÎÇÏ°í ÇöÀç ¼Õ´ÔÀÌ ¾Æ´Ï¸é Waiting »óÅÂ·Î ÀüÈ¯
         if (manager.leftCustomer != null && manager.leftCustomer != this && manager.leftCustomer.IsSeated())
         {
             manager.leftCustomer.state_Waiting();
@@ -140,16 +176,65 @@ public class Customer : MonoBehaviour
             manager.rightCustomer.state_Waiting();
         }
     }
-    #endregion
-    #region ÁÖ¹®±â´É
-private void RandDrinkOrder()
-{
-    // dialogueData°¡ ÀÖÀ¸¸é ¸Å¹ø »õ·Î¿î ·£´ı ·¹½ÃÇÇ ÇÒ´ç
-    if (dialogueData != null && dialogueData.lines != null)
+
+    // ëŒ€ì‚¬ì— ì£¼ë¬¸í•œ ìŒë£Œ ì´ë¦„ ì‚½ì…
+    private string InsertOrderDialogueText(string text)
     {
-        dialogueData.lines.onOrder = RecipeBook.GetRandomOrderableRecipe();
-        Debug.Log($"{gameObject.name}ÀÇ ÁÖ¹®ÀÌ ·£´ıÀ¸·Î ¼³Á¤µÇ¾ú½À´Ï´Ù: {dialogueData.lines.onOrder}");
+        if (string.IsNullOrEmpty(text))
+        {
+            return text;
+        }
+
+        return text.Replace("{order}", currentOrder.ToString());
     }
-}
-#endregion
+    #endregion
+
+    #region ì£¼ë¬¸ ê¸°ëŠ¥
+    private void RandDrinkOrder()
+    {
+        currentOrder = RecipeBook.GetRandomOrderableRecipe();
+        Debug.Log($"{gameObject.name}ì˜ ì£¼ë¬¸ì´ ëœë¤ìœ¼ë¡œ ì„¤ì •ë˜ì—ˆìŠµë‹ˆë‹¤: {currentOrder}");
+    }
+
+    public void SetRuntimeOrder(Recipe order)
+    {
+        currentOrder = order;
+    }
+    #endregion
+
+    public int GetSeatIndex()
+    {
+        if (SeatIndex.IsValid(seatIndex))
+        {
+            return seatIndex;
+        }
+
+        CustomerManager manager = CustomerManager.Instance;
+        if (manager == null)
+        {
+            return SeatIndex.Unknown;
+        }
+
+        if (manager.leftCustomer == this)
+        {
+            return SeatIndex.Left;
+        }
+
+        if (manager.middleCustomer == this)
+        {
+            return SeatIndex.Middle;
+        }
+
+        if (manager.rightCustomer == this)
+        {
+            return SeatIndex.Right;
+        }
+
+        return SeatIndex.Unknown;
+    }
+
+    private int GetDialogueCanvasIndex()
+    {
+        return GetSeatIndex();
+    }
 }

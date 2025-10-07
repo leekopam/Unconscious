@@ -1,47 +1,56 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEngine;
 
 public class Customer_Spawner : MonoBehaviour
 {
-    public Canvas Canvas_Customer; //¼Õ´Ô »ı¼ºµÇ´Â Äµ¹ö½º
-    public List<GameObject> customerPrefabs; //¼Õ´Ô ÇÁ¸®ÆÕ ¸®½ºÆ®
-    public List<Vector3> spawnPositions; //¼Õ´Ô »ı¼º À§Ä¡ ¸®½ºÆ®
+    public Canvas Canvas_Customer; // ì†ë‹˜ ìƒì„±ë˜ëŠ” ìº”ë²„ìŠ¤
+    public List<GameObject> customerPrefabs; // ì†ë‹˜ í”„ë¦¬íŒ¹ ë¦¬ìŠ¤íŠ¸
+    public List<Vector3> spawnPositions; // ì†ë‹˜ ìƒì„± ìœ„ì¹˜ ë¦¬ìŠ¤íŠ¸
 
-    //¼Õ´Ô Âø¼® ¿©ºÎ
-    [HideInInspector] public bool seat_Left = false; 
+    // ì†ë‹˜ ì°©ì„ ì—¬ë¶€
+    [HideInInspector] public bool seat_Left = false;
     [HideInInspector] public bool seat_Middle = false;
     [HideInInspector] public bool seat_Right = false;
 
-    private CustomerData customerData;
-    // Áßº¹ ¹æÁö¸¦ À§ÇÑ »ı¼ºµÈ ÇÁ¸®ÆÕ ÃßÀû ¸®½ºÆ® Ãß°¡
-    private List<int> spawnedPrefabIndices = new List<int>();
+    // ì¤‘ë³µ ë°©ì§€ë¥¼ ìœ„í•œ ìƒì„±ëœ í”„ë¦¬íŒ¹ ì¶”ì  ë¦¬ìŠ¤íŠ¸
+    private readonly List<int> spawnedPrefabIndices = new List<int>();
 
-    private int maxCustomers = 3; //ÃÖ´ë ¼Õ´Ô ¼ö
-    private int spawnIndex = 0; //»ı¼ºµÈ ¼Õ´Ô ¼ö 
+    private int maxCustomers = 3; // ìµœëŒ€ ì†ë‹˜ ìˆ˜
+    private int spawnIndex = 0; // ìƒì„±ëœ ì†ë‹˜ ìˆ˜
 
-    void Start()
+    private void Start()
     {
-        customerData = GetComponent<CustomerData>();
         Load_customerData();
     }
 
-    void Update()
+    private void Update()
     {
         SpawnCustomer();
     }
 
     public void SpawnCustomer()
     {
-        if (spawnIndex >= customerPrefabs.Count) return;
-        if (spawnIndex >= maxCustomers) return;
+        if (spawnIndex >= customerPrefabs.Count)
+        {
+            return;
+        }
+
+        if (spawnIndex >= maxCustomers)
+        {
+            return;
+        }
 
         List<int> emptySeats = new List<int>();
-        if (!seat_Left) emptySeats.Add(0);    // ¿ŞÂÊ ÁÂ¼®
-        if (!seat_Middle) emptySeats.Add(1);  // °¡¿îµ¥ ÁÂ¼®
-        if (!seat_Right) emptySeats.Add(2);   // ¿À¸¥ÂÊ ÁÂ¼®
-        if (emptySeats.Count == 0) return; // ºó ÁÂ¼®ÀÌ ¾øÀ¸¸é ¸®ÅÏ
+        if (!seat_Left) emptySeats.Add(SeatIndex.Left);
+        if (!seat_Middle) emptySeats.Add(SeatIndex.Middle);
+        if (!seat_Right) emptySeats.Add(SeatIndex.Right);
 
-        // »ç¿ë °¡´ÉÇÑ ÇÁ¸®ÆÕ ÀÎµ¦½º Ã£±â (Áßº¹ ¹æÁö)
+        if (emptySeats.Count == 0)
+        {
+            return;
+        }
+
+        // ì‚¬ìš© ê°€ëŠ¥í•œ í”„ë¦¬íŒ¹ ì¸ë±ìŠ¤ ì°¾ê¸° (ì¤‘ë³µ ë°©ì§€)
         List<int> availablePrefabIndices = new List<int>();
         for (int i = 0; i < customerPrefabs.Count; i++)
         {
@@ -51,59 +60,62 @@ public class Customer_Spawner : MonoBehaviour
             }
         }
 
-        // »ç¿ë °¡´ÉÇÑ ÇÁ¸®ÆÕÀÌ ¾øÀ¸¸é ¸®ÅÏ
-        if (availablePrefabIndices.Count == 0) return;
+        if (availablePrefabIndices.Count == 0)
+        {
+            return;
+        }
 
-        // ºó ÁÂ¼® Áß ·£´ı ¼±ÅÃ
-        int seatIdx = emptySeats[UnityEngine.Random.Range(0, emptySeats.Count)];
-        
-        // »ç¿ë °¡´ÉÇÑ ÇÁ¸®ÆÕ Áß ·£´ı ¼±ÅÃ
-        int randomPrefabIdx = availablePrefabIndices[UnityEngine.Random.Range(0, availablePrefabIndices.Count)];
-        
-        // ¼±ÅÃµÈ ÇÁ¸®ÆÕ ÀÎµ¦½º¸¦ »ç¿ëµÈ ¸®½ºÆ®¿¡ Ãß°¡
+        int seatIdx = emptySeats[Random.Range(0, emptySeats.Count)];
+        int randomPrefabIdx = availablePrefabIndices[Random.Range(0, availablePrefabIndices.Count)];
         spawnedPrefabIndices.Add(randomPrefabIdx);
 
-        // ¼Õ´Ô ÇÁ¸®ÆÕÀ» Äµ¹ö½ºÀÇ ÀÚ½ÄÀ¸·Î »ı¼º
+        // ì†ë‹˜ í”„ë¦¬íŒ¹ì„ ìº”ë²„ìŠ¤ì˜ ìì‹ìœ¼ë¡œ ìƒì„±
         GameObject customer = Instantiate(customerPrefabs[randomPrefabIdx], Canvas_Customer.transform);
         RectTransform rectTransform = customer.GetComponent<RectTransform>();
         if (rectTransform != null)
         {
-            // Äµ¹ö½º ÁÂÇ¥°è¿¡ ¸Â°Ô À§Ä¡ ¼³Á¤
             rectTransform.anchoredPosition = spawnPositions[seatIdx];
         }
 
         Customer customerComponent = customer.GetComponent<Customer>();
-        // ÇÁ¸®ÆÕ ÀÎµ¦½º ¼³Á¤ Ãß°¡
         if (customerComponent != null)
         {
             customerComponent.prefabIndex = randomPrefabIdx;
+            customerComponent.seatIndex = seatIdx;
         }
-        
-        // ÁÂ¼® »óÅÂ °»½Å ¹× CustomerManager¿¡ ÇÒ´ç
+
+        // ì¢Œì„ ìƒíƒœ ê°±ì‹  ë° CustomerManagerì— í• ë‹¹
         switch (seatIdx)
         {
-            case 0:
+            case SeatIndex.Left:
                 seat_Left = true;
                 if (customerComponent != null)
+                {
                     CustomerManager.Instance.Set_LeftCustomer(customerComponent);
+                }
                 break;
-            case 1:
+
+            case SeatIndex.Middle:
                 seat_Middle = true;
                 if (customerComponent != null)
+                {
                     CustomerManager.Instance.Set_MiddleCustomer(customerComponent);
+                }
                 break;
-            case 2:
+
+            case SeatIndex.Right:
                 seat_Right = true;
                 if (customerComponent != null)
+                {
                     CustomerManager.Instance.Set_RightCustomer(customerComponent);
+                }
                 break;
         }
 
         spawnIndex++;
-        
     }
 
-    // ¼Õ´ÔÀÌ ÅğÀåÇÒ ¶§ ÇØ´ç ÇÁ¸®ÆÕ ÀÎµ¦½º¸¦ ´Ù½Ã »ç¿ë °¡´ÉÇÏ°Ô ¸¸µë
+    // ì†ë‹˜ì´ í‡´ì¥í•  ë•Œ í•´ë‹¹ í”„ë¦¬íŒ¹ ì¸ë±ìŠ¤ë¥¼ ë‹¤ì‹œ ì‚¬ìš© ê°€ëŠ¥í•˜ê²Œ ë§Œë“¬
     public void ReleasePrefabIndex(int prefabIndex)
     {
         if (spawnedPrefabIndices.Contains(prefabIndex))
@@ -112,85 +124,88 @@ public class Customer_Spawner : MonoBehaviour
         }
     }
 
-    // ÀúÀåµÈ ¼Õ´Ô µ¥ÀÌÅÍ¸¦ ºÒ·¯¿Í º¹¿øÇÏ´Â ¸Ş¼­µå
+    // ì €ì¥ëœ ì†ë‹˜ ë°ì´í„°ë¥¼ ë¶ˆëŸ¬ì™€ ë³µì›í•˜ëŠ” ë©”ì„œë“œ
     private void Load_customerData()
     {
-        // CustomerData ÀÎ½ºÅÏ½º °¡Á®¿À±â
         CustomerData customerData = CustomerData.Instance;
-        if (customerData == null) return;
-
-        // ÀúÀåµÈ ¼Õ´Ô µ¥ÀÌÅÍ°¡ ÀÖ´ÂÁö È®ÀÎÇÏ°í º¹¿ø
-        for (int seatIndex = 0; seatIndex < 3; seatIndex++)
+        if (customerData == null)
         {
-            // ÇØ´ç ÁÂ¼®¿¡ ¼Õ´ÔÀÌ ÀÖ¾ú´ÂÁö È®ÀÎ
-            if (customerData.seatStates[seatIndex] && !string.IsNullOrEmpty(customerData.customerNames[seatIndex]))
-            {
-                // ÀúÀåµÈ ¼Õ´Ô ÀÌ¸§¿¡¼­ ÇÁ¸®ÆÕ ÀÎµ¦½º ÃßÃâ
-                string customerName = customerData.customerNames[seatIndex];
-                int prefabIndex = ExtractPrefabIndexFromName(customerName);
-                
-                if (prefabIndex >= 0 && prefabIndex < customerPrefabs.Count)
-                {
-                    // ÇØ´ç ÇÁ¸®ÆÕÀ» ÁöÁ¤µÈ ÁÂ¼®¿¡ »ı¼º
-                    GameObject customer = Instantiate(customerPrefabs[prefabIndex], Canvas_Customer.transform);
-                    RectTransform rectTransform = customer.GetComponent<RectTransform>();
-                    
-                    if (rectTransform != null)
-                    {
-                        // ÁÂ¼® À§Ä¡¿¡ ¹èÄ¡
-                        rectTransform.anchoredPosition = spawnPositions[seatIndex];
-                    }
-
-                    // ÇÁ¸®ÆÕ ÀÎµ¦½º¸¦ »ç¿ëµÈ ¸®½ºÆ®¿¡ Ãß°¡
-                    if (!spawnedPrefabIndices.Contains(prefabIndex))
-                    {
-                        spawnedPrefabIndices.Add(prefabIndex);
-                    }
-
-                    Customer customerComponent = customer.GetComponent<Customer>();
-                    if (customerComponent != null)
-                    {
-                        // ÇÁ¸®ÆÕ ÀÎµ¦½º ¼³Á¤
-                        customerComponent.prefabIndex = prefabIndex;
-                        
-                        // ÀúÀåµÈ ´ëÈ­ ÀÎµ¦½º º¹¿ø
-                        customerComponent.dialogueIndex = customerData.dialogueIndices[seatIndex];
-                    }
-
-                    // ÁÂ¼® »óÅÂ ¾÷µ¥ÀÌÆ® ¹× CustomerManager¿¡ ÇÒ´ç
-                    switch (seatIndex)
-                    {
-                        case 0: // ¿ŞÂÊ ÁÂ¼®
-                            seat_Left = true;
-                            if (customerComponent != null)
-                                CustomerManager.Instance.Set_LeftCustomer(customerComponent);
-                            break;
-                        case 1: // °¡¿îµ¥ ÁÂ¼®
-                            seat_Middle = true;
-                            if (customerComponent != null)
-                                CustomerManager.Instance.Set_MiddleCustomer(customerComponent);
-                            break;
-                        case 2: // ¿À¸¥ÂÊ ÁÂ¼®
-                            seat_Right = true;
-                            if (customerComponent != null)
-                                CustomerManager.Instance.Set_RightCustomer(customerComponent);
-                            break;
-                    }
-
-                    spawnIndex++;
-                }
-            }
+            return;
         }
 
-        // ÀúÀåµÈ »óÅÂ º¹¿ø (CustomerData¿¡¼­ Á¦°øÇÏ´Â ¸Ş¼­µå »ç¿ë)
+        for (int seatIndex = 0; seatIndex < SeatIndex.Count; seatIndex++)
+        {
+            if (!customerData.seatStates[seatIndex] || string.IsNullOrEmpty(customerData.customerNames[seatIndex]))
+            {
+                continue;
+            }
+
+            string customerName = customerData.customerNames[seatIndex];
+            int prefabIndex = ExtractPrefabIndexFromName(customerName);
+
+            if (prefabIndex < 0 || prefabIndex >= customerPrefabs.Count)
+            {
+                continue;
+            }
+
+            GameObject customer = Instantiate(customerPrefabs[prefabIndex], Canvas_Customer.transform);
+            RectTransform rectTransform = customer.GetComponent<RectTransform>();
+            if (rectTransform != null)
+            {
+                rectTransform.anchoredPosition = spawnPositions[seatIndex];
+            }
+
+            if (!spawnedPrefabIndices.Contains(prefabIndex))
+            {
+                spawnedPrefabIndices.Add(prefabIndex);
+            }
+
+            Customer customerComponent = customer.GetComponent<Customer>();
+            if (customerComponent != null)
+            {
+                customerComponent.prefabIndex = prefabIndex;
+                customerComponent.dialogueIndex = customerData.dialogueIndices[seatIndex];
+                customerComponent.seatIndex = seatIndex;
+            }
+
+            switch (seatIndex)
+            {
+                case SeatIndex.Left:
+                    seat_Left = true;
+                    if (customerComponent != null)
+                    {
+                        CustomerManager.Instance.Set_LeftCustomer(customerComponent);
+                    }
+                    break;
+
+                case SeatIndex.Middle:
+                    seat_Middle = true;
+                    if (customerComponent != null)
+                    {
+                        CustomerManager.Instance.Set_MiddleCustomer(customerComponent);
+                    }
+                    break;
+
+                case SeatIndex.Right:
+                    seat_Right = true;
+                    if (customerComponent != null)
+                    {
+                        CustomerManager.Instance.Set_RightCustomer(customerComponent);
+                    }
+                    break;
+            }
+
+            spawnIndex++;
+        }
+
+        // ì €ì¥ëœ ì£¼ë¬¸/ìƒíƒœ ë³µì›
+        customerData.RestoreOrderDrink();
         customerData.RestoreCustomerState();
     }
 
-    // ¼Õ´Ô ÀÌ¸§¿¡¼­ ÇÁ¸®ÆÕ ÀÎµ¦½º¸¦ ÃßÃâÇÏ´Â ÇïÆÛ ¸Ş¼­µå
+    // ì†ë‹˜ ì´ë¦„ì—ì„œ í”„ë¦¬íŒ¹ ì¸ë±ìŠ¤ë¥¼ ì¶”ì¶œí•˜ëŠ” í—¬í¼ ë©”ì„œë“œ
     private int ExtractPrefabIndexFromName(string customerName)
     {
-        // ¼Õ´Ô ÀÌ¸§ÀÌ "CustomerPrefab_0(Clone)" Çü½ÄÀÌ¶ó°í °¡Á¤
-        // ½ÇÁ¦ ¸í¸í ±ÔÄ¢¿¡ ¸Â°Ô ¼öÁ¤ ÇÊ¿ä
         for (int i = 0; i < customerPrefabs.Count; i++)
         {
             string expectedName = customerPrefabs[i].name;
@@ -199,6 +214,7 @@ public class Customer_Spawner : MonoBehaviour
                 return i;
             }
         }
-        return -1; // ¸ÅÄªµÇ´Â ÇÁ¸®ÆÕÀ» Ã£Áö ¸øÇÑ °æ¿ì
+
+        return -1;
     }
 }

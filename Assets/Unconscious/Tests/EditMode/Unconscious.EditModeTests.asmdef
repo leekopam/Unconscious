@@ -1,0 +1,21 @@
+{
+    "name": "Unconscious.EditModeTests",
+    "rootNamespace": "",
+    "references": [
+        "GUID:0b5ef914e7cb4afe827a102504f3ee45"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false,
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ]
+}

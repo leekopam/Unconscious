@@ -1,18 +1,97 @@
+ï»¿using System;
+using System.Collections.Generic;
 using UnityEngine;
+
+public enum IngredientId
+{
+    Unknown,
+    PeachWine,
+    NarinIhwaju,
+    Gahyangju,
+    Soseulbaram,
+    Hojeopjimong,
+    Dongjitdal
+}
+
+[Serializable]
+public class SelectedIngredient
+{
+    public IngredientId id;
+    public string name;
+    public int alcoholContent;
+    public int sweetness;
+    public int bitterness;
+    public FlavorType flavor;
+    public int flavorIntensity;
+}
+
+public static class IngredientNameMapper
+{
+    private static readonly Dictionary<IngredientId, string> displayNameById = new Dictionary<IngredientId, string>
+    {
+        { IngredientId.PeachWine, "ë„í™”ì£¼" },
+        { IngredientId.NarinIhwaju, "ë‚˜ë¦° ì´í™”ì£¼" },
+        { IngredientId.Gahyangju, "ê°€í–¥ì£¼" },
+        { IngredientId.Soseulbaram, "ì†ŒìŠ¬ë°”ëŒ" },
+        { IngredientId.Hojeopjimong, "í˜¸ì ‘ì§€ëª½" },
+        { IngredientId.Dongjitdal, "ë™ì§“ë‹¬" },
+    };
+
+    private static readonly Dictionary<string, IngredientId> idByNormalizedName =
+        new Dictionary<string, IngredientId>(StringComparer.Ordinal)
+        {
+            { "ë„í™”ì£¼", IngredientId.PeachWine },
+            { "ë‚˜ë¦° ì´í™”ì£¼", IngredientId.NarinIhwaju },
+            { "ê°€í–¥ì£¼", IngredientId.Gahyangju },
+            { "ì†ŒìŠ¬ë°”ëŒ", IngredientId.Soseulbaram },
+            { "í˜¸ì ‘ì§€ëª½", IngredientId.Hojeopjimong },
+            { "ë™ì§“ë‹¬", IngredientId.Dongjitdal },
+        };
+
+    public static IngredientId ToIngredientId(string rawName)
+    {
+        if (string.IsNullOrWhiteSpace(rawName))
+        {
+            return IngredientId.Unknown;
+        }
+
+        string normalizedName = rawName.Trim();
+        return idByNormalizedName.TryGetValue(normalizedName, out IngredientId id)
+            ? id
+            : IngredientId.Unknown;
+    }
+
+    public static string ToDisplayName(IngredientId id, string fallbackName)
+    {
+        if (displayNameById.TryGetValue(id, out string displayName))
+        {
+            return displayName;
+        }
+
+        return string.IsNullOrWhiteSpace(fallbackName) ? id.ToString() : fallbackName.Trim();
+    }
+}
 
 public class AlcoholStatus : MonoBehaviour
 {
-    [HideInInspector] public string Name;
+    [SerializeField] private IngredientId ingredientId = IngredientId.Unknown;
+
     public int AlcoholContent;
     public int Sweetness;
     public int Bitterness;
     public FlavorType Flavor;
     public int FlavorIntensity;
 
-    // °¢ À½·á¿¡ ÇÒ´çµÈ ¿ÀºêÁ§Æ®µéÀ» °ü¸®ÇÏ´Â ¹è¿­
+    // ê° ìŒë£Œì— í• ë‹¹ëœ ì˜¤ë¸Œì íŠ¸ë“¤ì„ ê´€ë¦¬í•˜ëŠ” ë°°ì—´
     [SerializeField] private GameObject[] layerObjects;
 
     private MakeCocktail makeCocktail;
+
+    public IngredientId Ingredient => ResolveIngredientId();
+
+    public string DisplayName => IngredientNameMapper.ToDisplayName(
+        ResolveIngredientId(),
+        gameObject != null ? gameObject.name : string.Empty);
 
     private void Start()
     {
@@ -20,35 +99,46 @@ public class AlcoholStatus : MonoBehaviour
 
         if (makeCocktail == null)
         {
-            Debug.LogError("MakeCocktail ½ºÅ©¸³Æ®¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù!");
+            Debug.LogError("MakeCocktail ìŠ¤í¬ë¦½íŠ¸ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤!");
         }
     }
 
     private void OnMouseDown()
     {
-        if (makeCocktail != null)
+        if (makeCocktail == null)
         {
-            Name = gameObject.name;
+            return;
+        }
 
-            // ÇöÀç Ãş¼ö¿¡ ÇØ´çÇÏ´Â ¿ÀºêÁ§Æ® È°¼ºÈ­ ¿äÃ»
-            int currentLayer = makeCocktail.GetCurrentLayer();
-            if (currentLayer < layerObjects.Length)
-            {
-                makeCocktail.ActivateLayerObject(layerObjects[currentLayer]);
-            }
+        bool isAdded = makeCocktail.TryAddIngredient(this);
+        if (!isAdded)
+        {
+            return;
+        }
 
-            makeCocktail.GetAlcoholStatus(
-                Name,
-                AlcoholContent,
-                Sweetness,
-                Bitterness,
-                Flavor,
-                FlavorIntensity
-            );
+        // í˜„ì¬ ì¸µìˆ˜ì— í•´ë‹¹í•˜ëŠ” ì˜¤ë¸Œì íŠ¸ í™œì„±í™” ìš”ì²­
+        int currentLayer = makeCocktail.GetCurrentLayer();
+        if (currentLayer < layerObjects.Length)
+        {
+            makeCocktail.ActivateLayerObject(layerObjects[currentLayer]);
         }
     }
 
-    // ÀÌ À½·á¿¡ ÇÒ´çµÈ ¸ğµç ¿ÀºêÁ§Æ® ºñÈ°¼ºÈ­
+    public SelectedIngredient ToSelectedIngredient()
+    {
+        return new SelectedIngredient
+        {
+            id = ResolveIngredientId(),
+            name = DisplayName,
+            alcoholContent = AlcoholContent,
+            sweetness = Sweetness,
+            bitterness = Bitterness,
+            flavor = Flavor,
+            flavorIntensity = FlavorIntensity
+        };
+    }
+
+    // ì´ ìŒë£Œì— í• ë‹¹ëœ ëª¨ë“  ì˜¤ë¸Œì íŠ¸ ë¹„í™œì„±í™”
     public void DeactivateAllObjects()
     {
         foreach (GameObject obj in layerObjects)
@@ -58,6 +148,16 @@ public class AlcoholStatus : MonoBehaviour
                 obj.SetActive(false);
             }
         }
+    }
+
+    private IngredientId ResolveIngredientId()
+    {
+        if (ingredientId != IngredientId.Unknown)
+        {
+            return ingredientId;
+        }
+
+        return IngredientNameMapper.ToIngredientId(gameObject != null ? gameObject.name : string.Empty);
     }
 }
 
@@ -71,5 +171,5 @@ public enum FlavorType
 
 public class LayerIdentifier : MonoBehaviour
 {
-    [SerializeField] public int LayerNumber; // ÀÌ ¿ÀºêÁ§Æ®°¡ ¼ÓÇÑ Ãş¼ö (0-3)
+    [SerializeField] public int LayerNumber; // ì´ ì˜¤ë¸Œì íŠ¸ê°€ ì†í•œ ì¸µìˆ˜ (0-3)
 }
