@@ -1,0 +1,74 @@
+using UnityEngine;
+using UnityEngine.Playables;
+using UnityEngine.SceneManagement;
+
+public class Bell : MonoBehaviour
+{
+    private PlayableDirector playableDirector;
+    private bool isPlay = false;
+
+    private void Start()
+    {
+        playableDirector = GetComponent<PlayableDirector>();
+
+        // PlayableDirector가 자동으로 재생되지 않도록 설정
+        if (playableDirector != null)
+        {
+            playableDirector.playOnAwake = false; // 자동 재생 비활성화
+            playableDirector.stopped += OnPlayableDirectorStopped;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        // 애니메이션 완료 이벤트 리스너 제거
+        if (playableDirector != null)
+        {
+            playableDirector.stopped -= OnPlayableDirectorStopped;
+        }
+    }
+
+    /// <summary>
+    /// PlayableDirector가 멈췄을 때 호출
+    /// </summary>
+    private void OnPlayableDirectorStopped(PlayableDirector director)
+    {
+        // 씬 전환 정보 저장
+        PlayerPrefs.SetString("LastScene", "Dessert");
+        PlayerPrefs.Save();
+
+        // Order 씬으로 이동
+        SceneManager.LoadScene("Order");
+        isPlay = false; // 애니메이션이 멈췄으므로 isPlay를 false로 설정
+    }
+
+    // 마우스 클릭했을때 애니메이션 재생
+    private void OnMouseDown()
+    {
+        if (!isPlay)
+        {
+            PlayAnimation();
+        }
+    }
+
+    private void PlayAnimation()
+    {
+        if (playableDirector != null)
+        {
+            if (playableDirector.playableAsset != null)
+            {
+                Debug.Log("PlayableDirector가 재생됩니다.");
+                playableDirector.Play();
+                isPlay = true;
+            }
+            else
+            {
+                Debug.LogError("PlayableDirector에 연결된 PlayableAsset이 없습니다.");
+            }
+        }
+        else
+        {
+            Debug.LogError("PlayableDirector가 할당되지 않았습니다.");
+        }
+    }
+}

@@ -3,16 +3,19 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Garnish
+  - SpawnPoint
+  - TargetPoint
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Outlined
   - Water
   - UI
-  - 
-  - 
+  - Highlights
+  - 3D OBJ
   - 
   - 
   - 

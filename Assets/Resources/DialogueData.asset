@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c057f8de22a76154caaada4bdde18bd1, type: 3}
+  m_Name: DialogueData
+  m_EditorClassIdentifier: 
+  customerDialogues:
+  - customerType: 0
+    dialogueLines:
+    - ...
+    - "\uC8FC\uC778\uC7A5 \uC5EC\uAE30 \uBA85\uACBD\uC9C0\uC218 \uD558\uB098 \uC8FC\uC2DC\uAC8C"
+    middleDialogueLines:
+    - "\uC911\uAC04\uC911\uAC04\uC911\uAC04"
+    clearDialogue:
+    - "\uC131\uACF5"
+    faileDialogue:
+    - "\uC2E4\uD328"
+    recipe: 4
