@@ -1,4 +1,4 @@
-using UnityEngine;
+Ôªøusing UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using System.Collections.Generic;
@@ -16,7 +16,7 @@ public class GarnishSelecter : MonoBehaviour
 
     private List<List<GameObject>> garnishLists;
 
-    private int currentIndex = 1; // √ ±‚ ¡ﬂæ” ¿Œµ¶Ω∫
+    private int currentIndex = 1; // Ï¥àÍ∏∞ Ï§ëÏïô Ïù∏Îç±Ïä§
     [SerializeField] private float imageMovementDistance = 150f;
     [SerializeField] private float animationDuration = 0.5f;
     [SerializeField] private float selectImgScale = 1.5f;
@@ -86,10 +86,7 @@ public class GarnishSelecter : MonoBehaviour
 
         for (int i = 0; i < carouselImages.Length; i++)
         {
-            carouselImages[i].rectTransform.DOAnchorPosX(
-                CalculateImagePosition(i),
-                animationDuration
-            );
+            AnimateAnchoredPosX(carouselImages[i].rectTransform, CalculateImagePosition(i), animationDuration);
 
             if (i == currentIndex)
             {
@@ -104,6 +101,24 @@ public class GarnishSelecter : MonoBehaviour
                 ToggleGarnishObjects(i, false);
             }
         }
+    }
+
+    private void AnimateAnchoredPosX(RectTransform rectTransform, float targetX, float duration)
+    {
+        if (rectTransform == null)
+        {
+            return;
+        }
+
+        Vector2 current = rectTransform.anchoredPosition;
+        Vector2 target = new Vector2(targetX, current.y);
+
+        DOTween.To(
+            () => rectTransform.anchoredPosition,
+            value => rectTransform.anchoredPosition = value,
+            target,
+            duration
+        );
     }
 
     private void ToggleGarnishObjects(int index, bool isActive)

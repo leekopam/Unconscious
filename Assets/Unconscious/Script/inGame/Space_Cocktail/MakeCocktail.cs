@@ -1,6 +1,7 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MakeCocktail : MonoBehaviour
 {
@@ -10,25 +11,30 @@ public class MakeCocktail : MonoBehaviour
     [SerializeField] private GameObject resetButton;
 
     private int currentLayer = 0;
-    private List<GameObject> activeObjects = new List<GameObject>();
-    private List<AlcoholStatus> alcoholStatuses = new List<AlcoholStatus>();
+    private readonly List<GameObject> activeObjects = new List<GameObject>();
+    private readonly List<SelectedIngredient> selectedIngredients = new List<SelectedIngredient>();
 
-    private RecipeBook recipeBook;
-    private MixState currentMixState;
+    private MixState currentMixState = MixState.Layer;
 
     private int totalAlcoholContent = 0;
     private int totalSweetness = 0;
     private int totalBitterness = 0;
     private int totalFlavorIntensity = 0;
 
-    private bool IsTechnic = false;
+    private bool isTechnic = false;
 
     private void Awake()
     {
-        recipeBook = new RecipeBook();
         if (resetButton != null)
         {
             resetButton.SetActive(true);
+
+            Button button = resetButton.GetComponent<Button>();
+            if (button != null)
+            {
+                button.onClick.RemoveListener(ResetAll);
+                button.onClick.AddListener(ResetAll);
+            }
         }
     }
 
@@ -47,13 +53,15 @@ public class MakeCocktail : MonoBehaviour
 
     public void ActivateLayerObject(GameObject obj)
     {
-        if (currentLayer < MAX_LAYERS)
+        if (obj == null || currentLayer >= MAX_LAYERS)
         {
-            DeactivateLayerObjects(currentLayer);
-            obj.SetActive(true);
-            activeObjects.Add(obj);
-            currentLayer++;
+            return;
         }
+
+        DeactivateLayerObjects(currentLayer);
+        obj.SetActive(true);
+        activeObjects.Add(obj);
+        currentLayer++;
     }
 
     private void DeactivateLayerObjects(int layer)
@@ -65,6 +73,7 @@ public class MakeCocktail : MonoBehaviour
                 obj.SetActive(false);
                 return true;
             }
+
             return false;
         });
     }
@@ -80,145 +89,192 @@ public class MakeCocktail : MonoBehaviour
         }
 
         activeObjects.Clear();
-        alcoholStatuses.Clear();
+        selectedIngredients.Clear();
         currentLayer = 0;
 
-        totalAlcoholContent = 0;
-        totalSweetness = 0;
-        totalBitterness = 0;
-        totalFlavorIntensity = 0;
+        currentMixState = MixState.Layer;
+        isTechnic = false;
+        ResetTotals();
 
-        Debug.Log("¸ðµç »óÅÂ°¡ ÃÊ±âÈ­µÇ¾ú½À´Ï´Ù.");
+        CocktailData.Instance.ClearCurrentCocktailProgress();
+        Debug.Log("[Cocktail] ëª¨ë“  ìƒíƒœê°€ ì´ˆê¸°í™”ë˜ì—ˆìŠµë‹ˆë‹¤.");
     }
 
+    public bool TryAddIngredient(AlcoholStatus alcoholStatus)
+    {
+        if (alcoholStatus == null)
+        {
+            return false;
+        }
+
+        if (selectedIngredients.Count >= MAX_ALCOHOL_COUNT)
+        {
+            Debug.Log("[Cocktail] ë” ì´ìƒ ìˆ ì„ ì¶”ê°€í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
+            return false;
+        }
+
+        SelectedIngredient ingredient = alcoholStatus.ToSelectedIngredient();
+        selectedIngredients.Add(ingredient);
+
+        RecalculateTotals();
+
+        Debug.Log($"[Cocktail] ìž¬ë£Œ ì¶”ê°€: {ingredient.name} ({selectedIngredients.Count}/{MAX_ALCOHOL_COUNT})");
+        Debug.Log($"[Cocktail] ë„ìˆ˜:{ingredient.alcoholContent}, ë‹¨ë§›:{ingredient.sweetness}, ì“´ë§›:{ingredient.bitterness}, í–¥:{ingredient.flavor}, í–¥ê°•ë„:{ingredient.flavorIntensity}");
+
+        // ìž¬ë£Œê°€ ì¶”ê°€ë  ë•Œë§ˆë‹¤ CocktailData ì—…ë°ì´íŠ¸
+        CocktailData.Instance.UpdateCurrentCocktail(this);
+        return true;
+    }
+
+    // ê¸°ì¡´ ì”¬/í˜¸ì¶œë¶€ì™€ì˜ í˜¸í™˜ì„ ìœ„í•œ ë ˆê±°ì‹œ ì¸í„°íŽ˜ì´ìŠ¤
     public void GetAlcoholStatus(string name, int alcoholContent,
         int sweetness, int bitterness, FlavorType flavorType, int flavorIntensity)
     {
-        if (alcoholStatuses.Count >= MAX_ALCOHOL_COUNT)
+        if (selectedIngredients.Count >= MAX_ALCOHOL_COUNT)
         {
-            Debug.Log("´õ ÀÌ»ó ¼úÀ» Ãß°¡ÇÒ ¼ö ¾ø½À´Ï´Ù.");
+            Debug.Log("[Cocktail] ë” ì´ìƒ ìˆ ì„ ì¶”ê°€í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
-        AlcoholStatus alcoholStatus = new AlcoholStatus
+        IngredientId id = IngredientNameMapper.ToIngredientId(name);
+        SelectedIngredient ingredient = new SelectedIngredient
         {
-            Name = name,
-            AlcoholContent = alcoholContent,
-            Sweetness = sweetness,
-            Bitterness = bitterness,
-            Flavor = flavorType,
-            FlavorIntensity = flavorIntensity
+            id = id,
+            name = IngredientNameMapper.ToDisplayName(id, name),
+            alcoholContent = alcoholContent,
+            sweetness = sweetness,
+            bitterness = bitterness,
+            flavor = flavorType,
+            flavorIntensity = flavorIntensity
         };
 
-        alcoholStatuses.Add(alcoholStatus);
+        selectedIngredients.Add(ingredient);
+        RecalculateTotals();
 
-        Debug.Log($"ÇöÀç ÀúÀåµÈ ¼úÀÇ °³¼ö: {alcoholStatuses.Count}");
-        Debug.Log(
-            $"Ãß°¡µÈ ¼ú: {name}, " +
-            $"µµ¼ö: {alcoholContent}, " +
-            $"´Ü¸À: {sweetness}, " +
-            $"¾´¸À: {bitterness}, " +
-            $"ÇâÀÇ Á¾·ù: {flavorType}, " +
-            $"ÇâÀÇ ¼¼±â: {flavorIntensity}");
+        Debug.Log($"[Cocktail] ìž¬ë£Œ ì¶”ê°€(í˜¸í™˜): {ingredient.name} ({selectedIngredients.Count}/{MAX_ALCOHOL_COUNT})");
 
-        // Àç·á°¡ Ãß°¡µÉ ¶§¸¶´Ù CocktailData ¾÷µ¥ÀÌÆ®
         CocktailData.Instance.UpdateCurrentCocktail(this);
     }
 
     public void SetMixState(MixState mixState)
     {
         currentMixState = mixState;
-        Debug.Log($"ÇöÀç ¹Í½º »óÅÂ: {currentMixState}");
+        Debug.Log($"[Cocktail] í˜„ìž¬ ë¯¹ìŠ¤ ìƒíƒœ: {currentMixState}");
     }
 
     public void SetMixStateShake()
     {
-        IsTechnic = true;
+        isTechnic = true;
         SetMixState(MixState.Shake);
     }
 
     public void SetMixStateStir()
     {
-        IsTechnic = true;
+        isTechnic = true;
         SetMixState(MixState.Stir);
-        
     }
 
     public void SetMixStateLayer()
     {
-        //Layer´Â µû·Î ´©¸£¸é ±×³É ¿Ï¼º¹öÆ°
-        if (!IsTechnic)
+        // LayerëŠ” ë”°ë¡œ ëˆ„ë¥´ë©´ ê·¸ëƒ¥ ì™„ì„± ë²„íŠ¼ìœ¼ë¡œ ë™ìž‘
+        if (!isTechnic)
         {
             SetMixState(MixState.Layer);
         }
-        
+
         CalculateCoktail();
     }
 
+    // ê¸°ì¡´ ë²„íŠ¼ ë°”ì¸ë”© ìœ ì§€ (ì˜¤íƒ€ ì´ë¦„ ìœ ì§€)
     public void CalculateCoktail()
     {
-        if (alcoholStatuses.Count == 0)
+        CalculateCocktail();
+    }
+
+    private void CalculateCocktail()
+    {
+        if (selectedIngredients.Count == 0)
         {
-            Debug.Log("¼±ÅÃµÈ ¼úÀÌ ¾ø½À´Ï´Ù.");
+            Debug.Log("[Cocktail] ì„ íƒëœ ìˆ ì´ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
-        if (alcoholStatuses.Count != 2)
+        if (selectedIngredients.Count != MAX_ALCOHOL_COUNT)
         {
-            Debug.Log("Ä¬Å×ÀÏÀ» ¸¸µé±â À§ÇØ¼­´Â Á¤È®È÷ µÎ °³ÀÇ ¼úÀÌ ÇÊ¿äÇÕ´Ï´Ù.");
+            Debug.Log("[Cocktail] ì¹µí…Œì¼ì„ ë§Œë“¤ê¸° ìœ„í•´ì„œëŠ” ì •í™•ížˆ ë‘ ê°œì˜ ìˆ ì´ í•„ìš”í•©ë‹ˆë‹¤.");
             return;
         }
 
-        // ÃÑÇÕ °è»ê (°á°ú °è»ê Àü¿¡ ¸ÕÀú °è»ê)
-        totalAlcoholContent = 0;
-        totalSweetness = 0;
-        totalBitterness = 0;
-        totalFlavorIntensity = 0;
+        RecalculateTotals();
 
-        foreach (var alcohol in alcoholStatuses)
-        {
-            totalAlcoholContent += alcohol.AlcoholContent;
-            totalSweetness += alcohol.Sweetness;
-            totalBitterness += alcohol.Bitterness;
-            totalFlavorIntensity += alcohol.FlavorIntensity;
-        }
+        SelectedIngredient ingredient1 = selectedIngredients[0];
+        SelectedIngredient ingredient2 = selectedIngredients[1];
 
-        AlcoholStatus alcohol1 = alcoholStatuses[0];
-        AlcoholStatus alcohol2 = alcoholStatuses[1];
-
-        Recipe? result = recipeBook.Check_Cocktail_Recipe(
-            alcohol1.Name, alcohol1.AlcoholContent, alcohol1.Sweetness,
-            alcohol1.Bitterness, alcohol1.Flavor, alcohol1.FlavorIntensity,
-            alcohol2.Name, alcohol2.AlcoholContent, alcohol2.Sweetness,
-            alcohol2.Bitterness, alcohol2.Flavor, alcohol2.FlavorIntensity,
+        Recipe result = RecipeBook.CheckCocktailRecipe(
+            ingredient1.id,
+            ingredient2.id,
             currentMixState);
 
-        // CocktailData¿¡ Á¦Á¶ ¿Ï·áµÈ Ä¬Å×ÀÏ Á¤º¸ ÀúÀå
+        // CocktailDataì— ì œì¡° ì™„ë£Œëœ ì¹µí…Œì¼ ì •ë³´ ì €ìž¥
         CocktailData.Instance.SaveCompletedCocktail(this, result);
 
-        if (result.HasValue)
+        if (result == Recipe.ì‹¤íŒ¨ìŒë£Œ)
         {
-            Debug.Log($"¿Ï¼ºµÈ Ä¬Å×ÀÏ: {result.Value}");
-            IsTechnic = false;
-            SceneManager.LoadScene("Dessert");
+            Debug.Log("[Cocktail] ì•Œë ¤ì§„ ë ˆì‹œí”¼ê°€ ì•„ë‹Œ ì¡°í•©ìž…ë‹ˆë‹¤(ì‹¤íŒ¨ìŒë£Œ).");
         }
         else
         {
-            Debug.Log("¾Ë·ÁÁø ·¹½ÃÇÇ°¡ ¾Æ´Ñ Á¶ÇÕÀÔ´Ï´Ù.");
+            Debug.Log($"[Cocktail] ì™„ì„±ëœ ì¹µí…Œì¼: {result}");
         }
+
+        isTechnic = false;
+        LoadDessertScene();
     }
 
     public void ClearAlcoholList()
     {
-        alcoholStatuses.Clear();
-        Debug.Log("¼ú ¸ñ·ÏÀÌ ÃÊ±âÈ­µÇ¾ú½À´Ï´Ù.");
+        selectedIngredients.Clear();
+        ResetTotals();
+        CocktailData.Instance.ClearCurrentCocktailProgress();
+        Debug.Log("[Cocktail] ìˆ  ëª©ë¡ì´ ì´ˆê¸°í™”ë˜ì—ˆìŠµë‹ˆë‹¤.");
     }
 
-    // CocktailData¿¡¼­ Á¢±ÙÇÒ ¼ö ÀÖµµ·Ï public ÇÁ·ÎÆÛÆ¼µé Ãß°¡
     public MixState GetCurrentMixState() => currentMixState;
-    public List<AlcoholStatus> GetAlcoholStatuses() => new List<AlcoholStatus>(alcoholStatuses);
+    public List<SelectedIngredient> GetSelectedIngredients() => new List<SelectedIngredient>(selectedIngredients);
     public int GetTotalAlcoholContent() => totalAlcoholContent;
     public int GetTotalSweetness() => totalSweetness;
     public int GetTotalBitterness() => totalBitterness;
     public int GetTotalFlavorIntensity() => totalFlavorIntensity;
+
+    private void LoadDessertScene()
+    {
+        if (Game_Manager.Instance != null)
+        {
+            Game_Manager.Instance.ChangeScene(SceneNames.Dessert);
+            return;
+        }
+
+        SceneManager.LoadScene(SceneNames.Dessert);
+    }
+
+    private void RecalculateTotals()
+    {
+        ResetTotals();
+
+        foreach (SelectedIngredient ingredient in selectedIngredients)
+        {
+            totalAlcoholContent += ingredient.alcoholContent;
+            totalSweetness += ingredient.sweetness;
+            totalBitterness += ingredient.bitterness;
+            totalFlavorIntensity += ingredient.flavorIntensity;
+        }
+    }
+
+    private void ResetTotals()
+    {
+        totalAlcoholContent = 0;
+        totalSweetness = 0;
+        totalBitterness = 0;
+        totalFlavorIntensity = 0;
+    }
 }

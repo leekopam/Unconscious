@@ -1,10 +1,11 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 
 public class CocktailData : MonoBehaviour
 {
     private static CocktailData instance;
+
     public static CocktailData Instance
     {
         get
@@ -19,47 +20,46 @@ public class CocktailData : MonoBehaviour
                     DontDestroyOnLoad(obj);
                 }
             }
+
             return instance;
         }
     }
 
-    // Á¦Á¶µÈ Ä¬Å×ÀÏ Á¤º¸¸¦ ÀúÀåÇÏ´Â Å¬·¡½º
     [System.Serializable]
     public class CocktailInfo
     {
-        public Recipe cocktailRecipe;           // ¿Ï¼ºµÈ Ä¬Å×ÀÏ Á¾·ù
-        public MixState mixMethod;              // Á¦Á¶ ¹æ¹ı (Shake, Stir, Layer)
-        public List<AlcoholIngredient> ingredients; // »ç¿ëµÈ Àç·áµé
-        public int totalAlcoholContent;         // ÃÑ ¾ËÄÚ¿Ã µµ¼ö
-        public int totalSweetness;              // ÃÑ ´Ü¸À
-        public int totalBitterness;             // ÃÑ ¾´¸À
-        public int totalFlavorIntensity;        // ÃÑ ¸À °­µµ
-        public bool isSuccessful;               // Á¦Á¶ ¼º°ø ¿©ºÎ
-        public System.DateTime createdTime;     // Á¦Á¶ ½Ã°£
+        public Recipe cocktailRecipe;                 // ì™„ì„±ëœ ì¹µí…Œì¼ ì¢…ë¥˜
+        public MixState mixMethod;                    // ì œì¡° ë°©ë²• (Shake, Stir, Layer)
+        public List<AlcoholIngredient> ingredients;   // ì‚¬ìš©ëœ ì¬ë£Œë“¤
+        public int totalAlcoholContent;               // ì´ ì•Œì½”ì˜¬ ë„ìˆ˜
+        public int totalSweetness;                    // ì´ ë‹¨ë§›
+        public int totalBitterness;                   // ì´ ì“´ë§›
+        public int totalFlavorIntensity;              // ì´ ë§› ê°•ë„
+        public bool isSuccessful;                     // ì œì¡° ì„±ê³µ ì—¬ë¶€
+        public System.DateTime createdTime;           // ì œì¡° ì‹œê°„
 
-        // »ı¼ºÀÚ Ãß°¡
         public CocktailInfo()
         {
             ingredients = new List<AlcoholIngredient>();
         }
     }
 
-    // Ä¬Å×ÀÏ¿¡ »ç¿ëµÈ Àç·á Á¤º¸
     [System.Serializable]
     public class AlcoholIngredient
     {
-        public string name;                     // Àç·á ÀÌ¸§
-        public int alcoholContent;              // ¾ËÄÚ¿Ã µµ¼ö
-        public int sweetness;                   // ´Ü¸À
-        public int bitterness;                  // ¾´¸À
-        public FlavorType flavorType;           // ¸À Á¾·ù
-        public int flavorIntensity;             // ¸À °­µµ
+        public IngredientId id;       // ì•ˆì • ì‹ë³„ì
+        public string name;           // ì¬ë£Œ ì´ë¦„
+        public int alcoholContent;    // ì•Œì½”ì˜¬ ë„ìˆ˜
+        public int sweetness;         // ë‹¨ë§›
+        public int bitterness;        // ì“´ë§›
+        public FlavorType flavorType; // í–¥ ì¢…ë¥˜
+        public int flavorIntensity;   // í–¥ ê°•ë„
     }
 
     [Header("Cocktail Manufacturing Data")]
-    public List<CocktailInfo> cocktailHistory = new List<CocktailInfo>(); // Á¦Á¶ ÀÌ·Â
-    [ReadOnly] public CocktailInfo currentCocktail;        // ÇöÀç Á¦Á¶ ÁßÀÎ Ä¬Å×ÀÏ
-    [ReadOnly] public CocktailInfo lastCompletedCocktail;  // ¸¶Áö¸·À¸·Î ¿Ï¼ºÇÑ Ä¬Å×ÀÏ
+    public List<CocktailInfo> cocktailHistory = new List<CocktailInfo>();
+    [ReadOnly] public CocktailInfo currentCocktail;
+    [ReadOnly] public CocktailInfo lastCompletedCocktail;
 
     private void Awake()
     {
@@ -74,53 +74,53 @@ public class CocktailData : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// MakeCocktail¿¡¼­ Á¦Á¶ ¿Ï·áµÈ Ä¬Å×ÀÏ Á¤º¸¸¦ ÀúÀå
-    /// </summary>
-    /// <param name="makeCocktail">MakeCocktail ÀÎ½ºÅÏ½º</param>
-    /// <param name="result">Á¦Á¶ °á°ú (Recipe)</param>
-    public void SaveCompletedCocktail(MakeCocktail makeCocktail, Recipe? result)
+    public void SaveCompletedCocktail(MakeCocktail makeCocktail, Recipe result)
     {
-        if (makeCocktail == null) return;
+        if (makeCocktail == null)
+        {
+            return;
+        }
 
         CocktailInfo cocktailInfo = new CocktailInfo
         {
-            cocktailRecipe = result ?? Recipe.½ÇÆĞÀ½·á,
+            cocktailRecipe = result,
             mixMethod = makeCocktail.GetCurrentMixState(),
-            ingredients = ConvertAlcoholStatusesToIngredients(makeCocktail.GetAlcoholStatuses()),
+            ingredients = ConvertSelectedIngredientsToIngredients(makeCocktail.GetSelectedIngredients()),
             totalAlcoholContent = makeCocktail.GetTotalAlcoholContent(),
             totalSweetness = makeCocktail.GetTotalSweetness(),
             totalBitterness = makeCocktail.GetTotalBitterness(),
             totalFlavorIntensity = makeCocktail.GetTotalFlavorIntensity(),
-            isSuccessful = result.HasValue && result.Value != Recipe.½ÇÆĞÀ½·á,
+            isSuccessful = result != Recipe.ì‹¤íŒ¨ìŒë£Œ,
             createdTime = System.DateTime.Now
         };
 
-        // ÇöÀç Ä¬Å×ÀÏ°ú ¸¶Áö¸· ¿Ï¼º Ä¬Å×ÀÏ ¾÷µ¥ÀÌÆ®
         currentCocktail = cocktailInfo;
         lastCompletedCocktail = cocktailInfo;
-
-        // ÀÌ·Â¿¡ Ãß°¡
         cocktailHistory.Add(cocktailInfo);
 
-        Debug.Log($"Ä¬Å×ÀÏ Á¦Á¶ ¿Ï·á ÀúÀå - {cocktailInfo.cocktailRecipe}: {(cocktailInfo.isSuccessful ? "¼º°ø" : "½ÇÆĞ")}");
-        Debug.Log($"Àç·á °³¼ö: {cocktailInfo.ingredients.Count}, ¹Í½º ¹æ¹ı: {cocktailInfo.mixMethod}");
-        Debug.Log($"ÃÑ µµ¼ö: {cocktailInfo.totalAlcoholContent}, ´Ü¸À: {cocktailInfo.totalSweetness}, ¾´¸À: {cocktailInfo.totalBitterness}");
+        Debug.Log($"[Cocktail] ì œì¡° ì™„ë£Œ ì €ì¥ - {cocktailInfo.cocktailRecipe}: {(cocktailInfo.isSuccessful ? "ì„±ê³µ" : "ì‹¤íŒ¨")}");
+        Debug.Log($"[Cocktail] ì¬ë£Œ ê°œìˆ˜: {cocktailInfo.ingredients.Count}, ë¯¹ìŠ¤ ë°©ë²•: {cocktailInfo.mixMethod}");
+        Debug.Log($"[Cocktail] ì´ ë„ìˆ˜: {cocktailInfo.totalAlcoholContent}, ë‹¨ë§›: {cocktailInfo.totalSweetness}, ì“´ë§›: {cocktailInfo.totalBitterness}");
     }
 
-    /// <summary>
-    /// Á¦Á¶ ÁøÇà ÁßÀÎ Ä¬Å×ÀÏ Á¤º¸ ¾÷µ¥ÀÌÆ® (Àç·á Ãß°¡½Ã¸¶´Ù È£Ãâ)
-    /// </summary>
-    /// <param name="makeCocktail">MakeCocktail ÀÎ½ºÅÏ½º</param>
+    // ê¸°ì¡´ nullable í˜¸ì¶œë¶€ í˜¸í™˜
+    public void SaveCompletedCocktail(MakeCocktail makeCocktail, Recipe? result)
+    {
+        SaveCompletedCocktail(makeCocktail, result ?? Recipe.ì‹¤íŒ¨ìŒë£Œ);
+    }
+
     public void UpdateCurrentCocktail(MakeCocktail makeCocktail)
     {
-        if (makeCocktail == null) return;
+        if (makeCocktail == null)
+        {
+            return;
+        }
 
         currentCocktail = new CocktailInfo
         {
-            cocktailRecipe = Recipe.ÁÖ¹®¾øÀ½, // ¾ÆÁ÷ ¿Ï¼ºµÇÁö ¾ÊÀ½
+            cocktailRecipe = Recipe.ì£¼ë¬¸ì—†ìŒ, // ì•„ì§ ì™„ì„±ë˜ì§€ ì•ŠìŒ
             mixMethod = makeCocktail.GetCurrentMixState(),
-            ingredients = ConvertAlcoholStatusesToIngredients(makeCocktail.GetAlcoholStatuses()),
+            ingredients = ConvertSelectedIngredientsToIngredients(makeCocktail.GetSelectedIngredients()),
             totalAlcoholContent = makeCocktail.GetTotalAlcoholContent(),
             totalSweetness = makeCocktail.GetTotalSweetness(),
             totalBitterness = makeCocktail.GetTotalBitterness(),
@@ -129,177 +129,128 @@ public class CocktailData : MonoBehaviour
             createdTime = System.DateTime.Now
         };
 
-        Debug.Log($"ÇöÀç Á¦Á¶ ÁßÀÎ Ä¬Å×ÀÏ ¾÷µ¥ÀÌÆ® - Àç·á: {currentCocktail.ingredients.Count}°³");
+        Debug.Log($"[Cocktail] í˜„ì¬ ì œì¡° ì¤‘ ì¹µí…Œì¼ ì—…ë°ì´íŠ¸ - ì¬ë£Œ: {currentCocktail.ingredients.Count}ê°œ");
     }
 
-    /// <summary>
-    /// AlcoholStatus ¸®½ºÆ®¸¦ AlcoholIngredient ¸®½ºÆ®·Î º¯È¯
-    /// </summary>
-    private List<AlcoholIngredient> ConvertAlcoholStatusesToIngredients(List<AlcoholStatus> alcoholStatuses)
+    public void ClearCurrentCocktailProgress()
+    {
+        currentCocktail = null;
+    }
+
+    private List<AlcoholIngredient> ConvertSelectedIngredientsToIngredients(List<SelectedIngredient> selectedIngredients)
     {
         List<AlcoholIngredient> ingredients = new List<AlcoholIngredient>();
-        
-        foreach (var alcohol in alcoholStatuses)
+
+        foreach (SelectedIngredient selectedIngredient in selectedIngredients)
         {
             AlcoholIngredient ingredient = new AlcoholIngredient
             {
-                name = alcohol.Name,
-                alcoholContent = alcohol.AlcoholContent,
-                sweetness = alcohol.Sweetness,
-                bitterness = alcohol.Bitterness,
-                flavorType = alcohol.Flavor,
-                flavorIntensity = alcohol.FlavorIntensity
+                id = selectedIngredient.id,
+                name = selectedIngredient.name,
+                alcoholContent = selectedIngredient.alcoholContent,
+                sweetness = selectedIngredient.sweetness,
+                bitterness = selectedIngredient.bitterness,
+                flavorType = selectedIngredient.flavor,
+                flavorIntensity = selectedIngredient.flavorIntensity
             };
+
             ingredients.Add(ingredient);
-            
-            Debug.Log($"Àç·á º¯È¯: {ingredient.name} (µµ¼ö:{ingredient.alcoholContent}, ´Ü¸À:{ingredient.sweetness}, ¾´¸À:{ingredient.bitterness})");
         }
-        
+
         return ingredients;
     }
 
-    #region ±âÁ¸ ÇïÆÛ ¸Ş¼­µåµé (´õ ÀÌ»ó »ç¿ëÇÏÁö ¾ÊÀ½)
-
-    private MixState GetMixStateFromMakeCocktail(MakeCocktail makeCocktail)
-    {
-        return makeCocktail.GetCurrentMixState();
-    }
-
-    private List<AlcoholIngredient> GetIngredientsFromMakeCocktail(MakeCocktail makeCocktail)
-    {
-        return ConvertAlcoholStatusesToIngredients(makeCocktail.GetAlcoholStatuses());
-    }
-
-    private int GetTotalAlcoholContent(MakeCocktail makeCocktail)
-    {
-        return makeCocktail.GetTotalAlcoholContent();
-    }
-
-    private int GetTotalSweetness(MakeCocktail makeCocktail)
-    {
-        return makeCocktail.GetTotalSweetness();
-    }
-
-    private int GetTotalBitterness(MakeCocktail makeCocktail)
-    {
-        return makeCocktail.GetTotalBitterness();
-    }
-
-    private int GetTotalFlavorIntensity(MakeCocktail makeCocktail)
-    {
-        return makeCocktail.GetTotalFlavorIntensity();
-    }
-
-    #endregion
-
-    #region ÆÛºí¸¯ Á¢±Ù ¸Ş¼­µåµé
-
-    /// <summary>
-    /// ¸¶Áö¸·À¸·Î Á¦Á¶ÇÑ Ä¬Å×ÀÏ Á¤º¸ ¹İÈ¯
-    /// </summary>
     public CocktailInfo GetLastCocktail()
     {
         return lastCompletedCocktail;
     }
 
-    /// <summary>
-    /// ÇöÀç Á¦Á¶ ÁßÀÎ Ä¬Å×ÀÏ Á¤º¸ ¹İÈ¯
-    /// </summary>
     public CocktailInfo GetCurrentCocktail()
     {
         return currentCocktail;
     }
 
-    /// <summary>
-    /// Æ¯Á¤ ·¹½ÃÇÇÀÇ Á¦Á¶ È½¼ö ¹İÈ¯
-    /// </summary>
     public int GetRecipeCount(Recipe recipe)
     {
         int count = 0;
-        foreach (var cocktail in cocktailHistory)
+        foreach (CocktailInfo cocktail in cocktailHistory)
         {
             if (cocktail.cocktailRecipe == recipe && cocktail.isSuccessful)
+            {
                 count++;
+            }
         }
+
         return count;
     }
 
-    /// <summary>
-    /// ¼º°øÇÑ Ä¬Å×ÀÏ Á¦Á¶ È½¼ö ¹İÈ¯
-    /// </summary>
     public int GetSuccessfulCocktailCount()
     {
         int count = 0;
-        foreach (var cocktail in cocktailHistory)
+        foreach (CocktailInfo cocktail in cocktailHistory)
         {
             if (cocktail.isSuccessful)
+            {
                 count++;
+            }
         }
+
         return count;
     }
 
-    /// <summary>
-    /// ½ÇÆĞÇÑ Ä¬Å×ÀÏ Á¦Á¶ È½¼ö ¹İÈ¯
-    /// </summary>
     public int GetFailedCocktailCount()
     {
         int count = 0;
-        foreach (var cocktail in cocktailHistory)
+        foreach (CocktailInfo cocktail in cocktailHistory)
         {
             if (!cocktail.isSuccessful)
+            {
                 count++;
+            }
         }
+
         return count;
     }
 
-    /// <summary>
-    /// Ä¬Å×ÀÏ Á¦Á¶ ÀÌ·Â ÃÊ±âÈ­
-    /// </summary>
     public void ClearHistory()
     {
         cocktailHistory.Clear();
         currentCocktail = null;
         lastCompletedCocktail = null;
-        Debug.Log("Ä¬Å×ÀÏ Á¦Á¶ ÀÌ·ÂÀÌ ÃÊ±âÈ­µÇ¾ú½À´Ï´Ù.");
+        Debug.Log("[Cocktail] ì œì¡° ì´ë ¥ì´ ì´ˆê¸°í™”ë˜ì—ˆìŠµë‹ˆë‹¤.");
     }
 
-    /// <summary>
-    /// Æ¯Á¤ °í°´ ÁÖ¹®¿¡ ¸Â´Â Ä¬Å×ÀÏÀ» Á¦Á¶Çß´ÂÁö È®ÀÎ
-    /// </summary>
-    /// <param name="orderedRecipe">ÁÖ¹®¹ŞÀº ·¹½ÃÇÇ</param>
-    /// <returns>ÁÖ¹®°ú ÀÏÄ¡ÇÏ¸é true</returns>
     public bool IsLastCocktailCorrect(Recipe orderedRecipe)
     {
-        if (lastCompletedCocktail == null) return false;
+        if (lastCompletedCocktail == null)
+        {
+            return false;
+        }
+
         return lastCompletedCocktail.isSuccessful && lastCompletedCocktail.cocktailRecipe == orderedRecipe;
     }
 
-    /// <summary>
-    /// ¸¶Áö¸· ¿Ï¼ºµÈ Ä¬Å×ÀÏÀÇ »ó¼¼ Á¤º¸¸¦ Ãâ·Â
-    /// </summary>
     public void PrintLastCocktailInfo()
     {
         if (lastCompletedCocktail == null)
         {
-            Debug.Log("¿Ï¼ºµÈ Ä¬Å×ÀÏÀÌ ¾ø½À´Ï´Ù.");
+            Debug.Log("ì™„ì„±ëœ ì¹µí…Œì¼ì´ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
-        Debug.Log("=== ¸¶Áö¸· ¿Ï¼ºµÈ Ä¬Å×ÀÏ Á¤º¸ ===");
-        Debug.Log($"Ä¬Å×ÀÏ: {lastCompletedCocktail.cocktailRecipe}");
-        Debug.Log($"Á¦Á¶ ¹æ¹ı: {lastCompletedCocktail.mixMethod}");
-        Debug.Log($"¼º°ø ¿©ºÎ: {(lastCompletedCocktail.isSuccessful ? "¼º°ø" : "½ÇÆĞ")}");
-        Debug.Log($"ÃÑ µµ¼ö: {lastCompletedCocktail.totalAlcoholContent}");
-        Debug.Log($"ÃÑ ´Ü¸À: {lastCompletedCocktail.totalSweetness}");
-        Debug.Log($"ÃÑ ¾´¸À: {lastCompletedCocktail.totalBitterness}");
-        Debug.Log($"ÃÑ ¸À °­µµ: {lastCompletedCocktail.totalFlavorIntensity}");
-        
-        Debug.Log("»ç¿ëµÈ Àç·á:");
-        foreach (var ingredient in lastCompletedCocktail.ingredients)
+        Debug.Log("=== ë§ˆì§€ë§‰ ì™„ì„±ëœ ì¹µí…Œì¼ ì •ë³´ ===");
+        Debug.Log($"ì¹µí…Œì¼: {lastCompletedCocktail.cocktailRecipe}");
+        Debug.Log($"ì œì¡° ë°©ë²•: {lastCompletedCocktail.mixMethod}");
+        Debug.Log($"ì„±ê³µ ì—¬ë¶€: {(lastCompletedCocktail.isSuccessful ? "ì„±ê³µ" : "ì‹¤íŒ¨")}");
+        Debug.Log($"ì´ ë„ìˆ˜: {lastCompletedCocktail.totalAlcoholContent}");
+        Debug.Log($"ì´ ë‹¨ë§›: {lastCompletedCocktail.totalSweetness}");
+        Debug.Log($"ì´ ì“´ë§›: {lastCompletedCocktail.totalBitterness}");
+        Debug.Log($"ì´ ë§› ê°•ë„: {lastCompletedCocktail.totalFlavorIntensity}");
+
+        Debug.Log("ì‚¬ìš©ëœ ì¬ë£Œ:");
+        foreach (AlcoholIngredient ingredient in lastCompletedCocktail.ingredients)
         {
-            Debug.Log($"- {ingredient.name}: µµ¼ö{ingredient.alcoholContent}, ´Ü¸À{ingredient.sweetness}, ¾´¸À{ingredient.bitterness}, {ingredient.flavorType}");
+            Debug.Log($"- {ingredient.name}: ë„ìˆ˜{ingredient.alcoholContent}, ë‹¨ë§›{ingredient.sweetness}, ì“´ë§›{ingredient.bitterness}, {ingredient.flavorType}");
         }
     }
-
-    #endregion
 }

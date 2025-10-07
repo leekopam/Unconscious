@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -13,9 +13,9 @@ public class Customer_DialogueData : ScriptableObject
 [System.Serializable]
 public class DialogueLine
 {
-    public List<string> FirstLine; //Ã¹(µîÀå) ´ë»ç
-    public Recipe onOrder; //ÁÖ¹®ÇÏ´Â À½·á
-    public string onTasteDrink; //À½·á¸¦ ¸Àº¼ ¶§ Ãâ·Â´ë»ç
-    public string onCorrectDrink; //À½·á°¡ ¸Â¾ÒÀ» ¶§ Ãâ·Â´ë»ç
-    public string onWrongDrink; //À½·á°¡ Æ²·ÈÀ» ¶§ Ãâ·Â´ë»ç
+    public List<string> FirstLine; //ì²«(ë“±ì¥) ëŒ€ì‚¬
+    public Recipe onOrder; //ì£¼ë¬¸í•˜ëŠ” ìŒë£Œ
+    public string onTasteDrink; //ìŒë£Œë¥¼ ë§›ë³¼ ë•Œ ì¶œë ¥ëŒ€ì‚¬
+    public string onCorrectDrink; //ìŒë£Œê°€ ë§ì•˜ì„ ë•Œ ì¶œë ¥ëŒ€ì‚¬
+    public string onWrongDrink; //ìŒë£Œê°€ í‹€ë ¸ì„ ë•Œ ì¶œë ¥ëŒ€ì‚¬
 }

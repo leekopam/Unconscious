@@ -1,11 +1,26 @@
-using UnityEngine;
+ï»¿using UnityEngine;
+
+public static class SeatIndex
+{
+    public const int Left = 0;
+    public const int Middle = 1;
+    public const int Right = 2;
+    public const int Count = 3;
+    public const int Unknown = -1;
+
+    public static bool IsValid(int index)
+    {
+        return index >= 0 && index < Count;
+    }
+}
 
 public class CustomerData : MonoBehaviour
 {
     private static CustomerData instance;
+
     public static CustomerData Instance
     {
-        // monobehaviorÀ» »ó¼Ó¹Ş±â ¶§¹®¿¡ DontDestroyOnLoadÀ» »ç¿ëÇÏ¿© ¾À Á¯ÇÑ½Ã¿¡µµ µ¥ÀÌÅÍ À¯Áö
+        // MonoBehaviour íŠ¹ì„±ìƒ DontDestroyOnLoadë¥¼ ì‚¬ìš©í•´ ì”¬ ì „í™˜ ì‹œì—ë„ ë°ì´í„° ìœ ì§€
         get
         {
             if (instance == null)
@@ -18,36 +33,37 @@ public class CustomerData : MonoBehaviour
                     DontDestroyOnLoad(obj);
                 }
             }
+
             return instance;
         }
     }
-    
-    // ÁÂ¼®º° °í°´ Á¤º¸¸¸ ÀúÀå
+
+    // ì¢Œì„ë³„ ê³ ê° ì •ë³´ë§Œ ì €ì¥
     [System.Serializable]
     public class SeatCustomerInfo
     {
-        public string customerName;  // ¾î¶² °í°´ÀÎÁö ½Äº°
-        public int seatIndex;       // 0: Left, 1: Middle, 2: Right
-        public Recipe orderedDrink; // °í°´ÀÌ ÁÖ¹®ÇÑ À½·á
-        public bool hasOrdered;     // ÁÖ¹®Çß´ÂÁö ¿©ºÎ
+        public string customerName;  // ì–´ë–¤ ê³ ê°ì¸ì§€ ì‹ë³„
+        public int seatIndex;        // 0: Left, 1: Middle, 2: Right
+        public Recipe orderedDrink;  // ê³ ê°ì´ ì£¼ë¬¸í•œ ìŒë£Œ
+        public bool hasOrdered;      // ì£¼ë¬¸í–ˆëŠ”ì§€ ì—¬ë¶€
     }
 
     [Header("Seat Data")]
-    public bool[] seatStates = new bool[3];      // Left, Middle, Right ÁÂ¼® Á¡À¯ »óÅÂ
-    public string[] customerNames = new string[3]; // °¢ ÁÂ¼®¿¡ ¾ÉÀº °í°´ ÀÌ¸§
-    public Recipe[] orderedDrinks = new Recipe[3]; // °¢ ÁÂ¼®ÀÇ °í°´ÀÌ ÁÖ¹®ÇÑ À½·á
-    public bool[] hasOrderedFlags = new bool[3];  // °¢ ÁÂ¼®ÀÇ °í°´ÀÌ ÁÖ¹®Çß´ÂÁö ¿©ºÎ
+    public bool[] seatStates = new bool[SeatIndex.Count];
+    public string[] customerNames = new string[SeatIndex.Count];
+    public Recipe[] orderedDrinks = new Recipe[SeatIndex.Count];
+    public bool[] hasOrderedFlags = new bool[SeatIndex.Count];
 
     [Header("Customer State Data")]
-    public string[] customerStates = new string[3]; // °¢ ÁÂ¼® °í°´ÀÇ ÇöÀç »óÅÂ (SeatedState, TasteState, ExitState)
-    public int[] dialogueIndices = new int[3];      // °¢ ÁÂ¼® °í°´ÀÇ ´ëÈ­ ÀÎµ¦½º
+    public string[] customerStates = new string[SeatIndex.Count];
+    public int[] dialogueIndices = new int[SeatIndex.Count];
 
     private void Awake()
     {
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(this.gameObject);
+            DontDestroyOnLoad(gameObject);
         }
         else if (instance != this)
         {
@@ -56,267 +72,280 @@ public class CustomerData : MonoBehaviour
     }
 
     /// <summary>
-    /// ÇöÀç ÁÂ¼® »óÅÂ¸¦ ÀúÀå
+    /// í˜„ì¬ ì¢Œì„ ìƒíƒœë¥¼ ì €ì¥
     /// </summary>
     public void SaveSeatData()
     {
-        // Customer_Spawner¿¡¼­ ÁÂ¼® »óÅÂ °¡Á®¿À±â
         Customer_Spawner spawner = FindObjectOfType<Customer_Spawner>();
         if (spawner != null)
         {
-            seatStates[0] = spawner.seat_Left;
-            seatStates[1] = spawner.seat_Middle;
-            seatStates[2] = spawner.seat_Right;
+            seatStates[SeatIndex.Left] = spawner.seat_Left;
+            seatStates[SeatIndex.Middle] = spawner.seat_Middle;
+            seatStates[SeatIndex.Right] = spawner.seat_Right;
         }
 
-        // CustomerManager¿¡¼­ °¢ ÁÂ¼®ÀÇ °í°´ ÀÌ¸§ °¡Á®¿À±â
-        CustomerManager customerManager = CustomerManager.Instance;
+        CustomerManager customerManager = FindObjectOfType<CustomerManager>();
         if (customerManager != null)
         {
-            customerNames[0] = customerManager.leftCustomer != null ? customerManager.leftCustomer.gameObject.name : "";
-            customerNames[1] = customerManager.middleCustomer != null ? customerManager.middleCustomer.gameObject.name : "";
-            customerNames[2] = customerManager.rightCustomer != null ? customerManager.rightCustomer.gameObject.name : "";
+            customerNames[SeatIndex.Left] = customerManager.leftCustomer != null ? customerManager.leftCustomer.gameObject.name : string.Empty;
+            customerNames[SeatIndex.Middle] = customerManager.middleCustomer != null ? customerManager.middleCustomer.gameObject.name : string.Empty;
+            customerNames[SeatIndex.Right] = customerManager.rightCustomer != null ? customerManager.rightCustomer.gameObject.name : string.Empty;
         }
     }
 
     /// <summary>
-    /// ÀúÀåµÈ ÁÂ¼® »óÅÂ¸¦ º¹¿ø
+    /// ì €ì¥ëœ ì¢Œì„ ìƒíƒœë¥¼ ë³µì›
     /// </summary>
     public void RestoreSeatData()
     {
-        // Customer_Spawner¿¡ ÁÂ¼® »óÅÂ º¹¿ø
         Customer_Spawner spawner = FindObjectOfType<Customer_Spawner>();
         if (spawner != null)
         {
-            spawner.seat_Left = seatStates[0];
-            spawner.seat_Middle = seatStates[1];
-            spawner.seat_Right = seatStates[2];
+            spawner.seat_Left = seatStates[SeatIndex.Left];
+            spawner.seat_Middle = seatStates[SeatIndex.Middle];
+            spawner.seat_Right = seatStates[SeatIndex.Right];
         }
 
         RestoreCustomerReferences();
     }
+
     private void RestoreCustomerReferences()
     {
-        CustomerManager customerManager = CustomerManager.Instance;
-        if (customerManager == null) return;
+        CustomerManager customerManager = FindObjectOfType<CustomerManager>();
+        if (customerManager == null)
+        {
+            return;
+        }
 
-        // ¾À¿¡¼­ °í°´µéÀ» Ã£¾Æ¼­ ÀÌ¸§À¸·Î ¸ÅÄª
         Customer[] customers = FindObjectsOfType<Customer>();
-        
         foreach (Customer customer in customers)
         {
-            // ÀúÀåµÈ °í°´ ÀÌ¸§°ú ¸ÅÄªÇÏ¿© ÀûÀıÇÑ ÁÂ¼®¿¡ ÇÒ´ç
             for (int i = 0; i < customerNames.Length; i++)
             {
-                if (customer.gameObject.name == customerNames[i])
+                if (customer.gameObject.name != customerNames[i])
                 {
-                    switch (i)
-                    {
-                        case 0: // Left seat
-                            customerManager.Set_LeftCustomer(customer);
-                            break;
-                        case 1: // Middle seat
-                            customerManager.Set_MiddleCustomer(customer);
-                            break;
-                        case 2: // Right seat
-                            customerManager.Set_RightCustomer(customer);
-                            break;
-                    }
-                    break;
+                    continue;
                 }
+
+                switch (i)
+                {
+                    case SeatIndex.Left:
+                        customerManager.Set_LeftCustomer(customer);
+                        break;
+                    case SeatIndex.Middle:
+                        customerManager.Set_MiddleCustomer(customer);
+                        break;
+                    case SeatIndex.Right:
+                        customerManager.Set_RightCustomer(customer);
+                        break;
+                }
+
+                break;
             }
         }
     }
 
     /// <summary>
-    /// °í°´ÀÇ ÁÖ¹® À½·á Á¤º¸¸¦ ÀúÀå
+    /// ê³ ê°ì˜ ì£¼ë¬¸ ìŒë£Œ ì •ë³´ë¥¼ ì €ì¥
     /// </summary>
     public void SaveOrderDrink()
     {
-        CustomerManager customerManager = CustomerManager.Instance;
-        if (customerManager == null) return;
+        CustomerManager customerManager = FindObjectOfType<CustomerManager>();
+        if (customerManager == null)
+        {
+            return;
+        }
 
-        // °¢ ÁÂ¼®ÀÇ °í°´ ÁÖ¹® Á¤º¸ ÀúÀå
-        SaveCustomerOrder(customerManager.leftCustomer, 0);
-        SaveCustomerOrder(customerManager.middleCustomer, 1);
-        SaveCustomerOrder(customerManager.rightCustomer, 2);
+        SaveCustomerOrder(customerManager.leftCustomer, SeatIndex.Left);
+        SaveCustomerOrder(customerManager.middleCustomer, SeatIndex.Middle);
+        SaveCustomerOrder(customerManager.rightCustomer, SeatIndex.Right);
     }
 
-    /// <summary>
-    /// Æ¯Á¤ °í°´ÀÇ ÁÖ¹® Á¤º¸¸¦ ÀúÀåÇÏ´Â ÇïÆÛ ¸Ş¼­µå
-    /// </summary>
-    /// <param name="customer">°í°´</param>
-    /// <param name="seatIndex">ÁÂ¼® ÀÎµ¦½º</param>
     private void SaveCustomerOrder(Customer customer, int seatIndex)
     {
-        if (customer != null && customer.dialogueData != null && customer.dialogueData.lines != null)
+        if (!SeatIndex.IsValid(seatIndex))
         {
-            orderedDrinks[seatIndex] = customer.dialogueData.lines.onOrder;
-            hasOrderedFlags[seatIndex] = true;
-            
-            Debug.Log($"°í°´ {customer.gameObject.name}ÀÇ ÁÖ¹®ÀÌ ÀúÀåµÇ¾ú½À´Ï´Ù: {customer.dialogueData.lines.onOrder}");
+            return;
         }
-        else
+
+        if (customer != null)
         {
-            //orderedDrinks[seatIndex] = default(Recipe);
-            orderedDrinks[seatIndex] = Recipe.ÁÖ¹®¾øÀ½;
-            hasOrderedFlags[seatIndex] = false;
+            orderedDrinks[seatIndex] = customer.CurrentOrder;
+            hasOrderedFlags[seatIndex] = customer.CurrentOrder != Recipe.ì£¼ë¬¸ì—†ìŒ;
+
+            Debug.Log($"[Order] ê³ ê° {customer.gameObject.name}ì˜ ì£¼ë¬¸ ì €ì¥: {customer.CurrentOrder} (seat={seatIndex})");
+            return;
         }
+
+        orderedDrinks[seatIndex] = Recipe.ì£¼ë¬¸ì—†ìŒ;
+        hasOrderedFlags[seatIndex] = false;
     }
 
     /// <summary>
-    /// °¢ °í°´ÀÇ »óÅÂ Á¤º¸¸¦ ÀúÀå
+    /// ì €ì¥ëœ ì£¼ë¬¸ ë°ì´í„°ë¥¼ ê³ ê° ì»´í¬ë„ŒíŠ¸ì— ë³µì›
+    /// </summary>
+    public void RestoreOrderDrink()
+    {
+        CustomerManager customerManager = FindObjectOfType<CustomerManager>();
+        if (customerManager == null)
+        {
+            return;
+        }
+
+        RestoreSingleOrder(customerManager.leftCustomer, SeatIndex.Left);
+        RestoreSingleOrder(customerManager.middleCustomer, SeatIndex.Middle);
+        RestoreSingleOrder(customerManager.rightCustomer, SeatIndex.Right);
+    }
+
+    private void RestoreSingleOrder(Customer customer, int seatIndex)
+    {
+        if (customer == null || !SeatIndex.IsValid(seatIndex))
+        {
+            return;
+        }
+
+        if (!hasOrderedFlags[seatIndex])
+        {
+            customer.SetRuntimeOrder(Recipe.ì£¼ë¬¸ì—†ìŒ);
+            return;
+        }
+
+        customer.SetRuntimeOrder(orderedDrinks[seatIndex]);
+    }
+
+    /// <summary>
+    /// ê° ê³ ê°ì˜ ìƒíƒœ ì •ë³´ë¥¼ ì €ì¥
     /// </summary>
     private void SaveCustomerState()
     {
-        CustomerManager customerManager = CustomerManager.Instance;
-        if (customerManager == null) return;
+        CustomerManager customerManager = FindObjectOfType<CustomerManager>();
+        if (customerManager == null)
+        {
+            return;
+        }
 
-        // °¢ ÁÂ¼®ÀÇ °í°´ »óÅÂ Á¤º¸ ÀúÀå
-        SaveIndividualCustomerState(customerManager.leftCustomer, 0);
-        SaveIndividualCustomerState(customerManager.middleCustomer, 1);
-        SaveIndividualCustomerState(customerManager.rightCustomer, 2);
+        SaveIndividualCustomerState(customerManager.leftCustomer, SeatIndex.Left);
+        SaveIndividualCustomerState(customerManager.middleCustomer, SeatIndex.Middle);
+        SaveIndividualCustomerState(customerManager.rightCustomer, SeatIndex.Right);
     }
 
-    /// <summary>
-    /// Æ¯Á¤ °í°´ÀÇ »óÅÂ Á¤º¸¸¦ ÀúÀåÇÏ´Â ÇïÆÛ ¸Ş¼­µå
-    /// </summary>
-    /// <param name="customer">°í°´</param>
-    /// <param name="seatIndex">ÁÂ¼® ÀÎµ¦½º</param>
     private void SaveIndividualCustomerState(Customer customer, int seatIndex)
     {
+        if (!SeatIndex.IsValid(seatIndex))
+        {
+            return;
+        }
+
         if (customer != null)
         {
-            // ÇöÀç »óÅÂ¸¦ ¹®ÀÚ¿­·Î ÀúÀå
-            var currentStateField = typeof(Customer).GetField("currentState", 
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            
-            if (currentStateField != null)
-            {
-                var currentState = currentStateField.GetValue(customer);
-                customerStates[seatIndex] = currentState?.GetType().Name ?? "SeatedState";
-            }
-            else
-            {
-                customerStates[seatIndex] = "SeatedState"; // ±âº»°ª
-            }
-
-            // ´ëÈ­ ÀÎµ¦½º ÀúÀå
+            customerStates[seatIndex] = customer.GetCurrentStateName();
             dialogueIndices[seatIndex] = customer.dialogueIndex;
-            
-            Debug.Log($"°í°´ {customer.gameObject.name}ÀÇ »óÅÂ°¡ ÀúÀåµÇ¾ú½À´Ï´Ù: {customerStates[seatIndex]}, ´ëÈ­ ÀÎµ¦½º: {dialogueIndices[seatIndex]}");
+
+            Debug.Log($"[Order] ê³ ê° {customer.gameObject.name} ìƒíƒœ ì €ì¥: {customerStates[seatIndex]}, ëŒ€í™” ì¸ë±ìŠ¤: {dialogueIndices[seatIndex]}");
+            return;
         }
-        else
-        {
-            // °í°´ÀÌ ¾ø´Â °æ¿ì ÃÊ±âÈ­
-            customerStates[seatIndex] = "";
-            dialogueIndices[seatIndex] = 0;
-        }
+
+        customerStates[seatIndex] = string.Empty;
+        dialogueIndices[seatIndex] = 0;
     }
 
     /// <summary>
-    /// ÀúÀåµÈ °í°´ »óÅÂ¸¦ º¹¿ø
+    /// ì €ì¥ëœ ê³ ê° ìƒíƒœë¥¼ ë³µì›
     /// </summary>
     public void RestoreCustomerState()
     {
-        CustomerManager customerManager = CustomerManager.Instance;
-        if (customerManager == null) return;
+        CustomerManager customerManager = FindObjectOfType<CustomerManager>();
+        if (customerManager == null)
+        {
+            return;
+        }
 
-        // °¢ ÁÂ¼®ÀÇ °í°´ »óÅÂ º¹¿ø
-        RestoreIndividualCustomerState(customerManager.leftCustomer, 0);
-        RestoreIndividualCustomerState(customerManager.middleCustomer, 1);
-        RestoreIndividualCustomerState(customerManager.rightCustomer, 2);
+        RestoreIndividualCustomerState(customerManager.leftCustomer, SeatIndex.Left);
+        RestoreIndividualCustomerState(customerManager.middleCustomer, SeatIndex.Middle);
+        RestoreIndividualCustomerState(customerManager.rightCustomer, SeatIndex.Right);
     }
 
-    /// <summary>
-    /// Æ¯Á¤ °í°´ÀÇ »óÅÂ¸¦ º¹¿øÇÏ´Â ÇïÆÛ ¸Ş¼­µå
-    /// </summary>
-    /// <param name="customer">°í°´</param>
-    /// <param name="seatIndex">ÁÂ¼® ÀÎµ¦½º</param>
     private void RestoreIndividualCustomerState(Customer customer, int seatIndex)
     {
-        if (customer != null && !string.IsNullOrEmpty(customerStates[seatIndex]))
+        if (customer == null || !SeatIndex.IsValid(seatIndex) || string.IsNullOrEmpty(customerStates[seatIndex]))
         {
-            // ´ëÈ­ ÀÎµ¦½º º¹¿ø
-            customer.dialogueIndex = dialogueIndices[seatIndex];
-
-            // »óÅÂ º¹¿ø
-            ICustomerState stateToRestore = null;
-            switch (customerStates[seatIndex])
-            {
-                default:
-                    stateToRestore = new SeatedState(); // ±âº»°ª
-                    break;
-
-                case "SeatedState":
-                    stateToRestore = new SeatedState();
-                    break;
-                case "WaitingState":
-                    stateToRestore = new WaitingState();
-                    break;
-                case "TasteState":
-                    stateToRestore = new TasteState();
-                    break;
-                case "ExitState":
-                    stateToRestore = new ExitState();
-                    break;
-                
-            }
-
-            if (stateToRestore != null)
-            {
-                customer.ChangeState(stateToRestore);
-            }
-
-            Debug.Log($"°í°´ {customer.gameObject.name}ÀÇ »óÅÂ°¡ º¹¿øµÇ¾ú½À´Ï´Ù: {customerStates[seatIndex]}, ´ëÈ­ ÀÎµ¦½º: {dialogueIndices[seatIndex]}");
+            return;
         }
+
+        // ëŒ€í™” ì¸ë±ìŠ¤ ë³µì›
+        customer.dialogueIndex = dialogueIndices[seatIndex];
+
+        // ìƒíƒœ ë³µì›
+        ICustomerState stateToRestore;
+        switch (customerStates[seatIndex])
+        {
+            case "SeatedState":
+                stateToRestore = new SeatedState();
+                break;
+            case "WaitingState":
+                stateToRestore = new WaitingState();
+                break;
+            case "TasteState":
+                stateToRestore = new TasteState();
+                break;
+            case "ExitState":
+                stateToRestore = new ExitState();
+                break;
+            default:
+                stateToRestore = new SeatedState();
+                break;
+        }
+
+        customer.ChangeState(stateToRestore);
+        Debug.Log($"[Order] ê³ ê° {customer.gameObject.name} ìƒíƒœ ë³µì›: {customerStates[seatIndex]}, ëŒ€í™” ì¸ë±ìŠ¤: {dialogueIndices[seatIndex]}");
     }
 
     /// <summary>
-    /// Æ¯Á¤ ÁÂ¼®ÀÇ °í°´ÀÌ ÁÖ¹®ÇÑ À½·á ¹İÈ¯
+    /// íŠ¹ì • ì¢Œì„ì˜ ê³ ê°ì´ ì£¼ë¬¸í•œ ìŒë£Œ ë°˜í™˜
     /// </summary>
-    /// <param name="seatIndex">0: Left, 1: Middle, 2: Right</param>
-    /// <returns>ÁÖ¹®ÇÑ À½·á</returns>
     public Recipe GetOrderedDrink(int seatIndex)
     {
-        if (seatIndex >= 0 && seatIndex < 3)
+        if (SeatIndex.IsValid(seatIndex))
+        {
             return orderedDrinks[seatIndex];
-        return default(Recipe);
+        }
+
+        return Recipe.ì£¼ë¬¸ì—†ìŒ;
     }
 
     /// <summary>
-    /// Æ¯Á¤ ÁÂ¼®ÀÇ °í°´ÀÌ ÁÖ¹®Çß´ÂÁö È®ÀÎ
+    /// íŠ¹ì • ì¢Œì„ì˜ ê³ ê°ì´ ì£¼ë¬¸í–ˆëŠ”ì§€ í™•ì¸
     /// </summary>
-    /// <param name="seatIndex">0: Left, 1: Middle, 2: Right</param>
-    /// <returns>ÁÖ¹®ÇßÀ¸¸é true</returns>
     public bool HasOrdered(int seatIndex)
     {
-        if (seatIndex >= 0 && seatIndex < 3)
+        if (SeatIndex.IsValid(seatIndex))
+        {
             return hasOrderedFlags[seatIndex];
+        }
+
         return false;
     }
 
-    #region ¾À ÀüÈ¯ ½Ã È£ÃâÇÒ ¸Ş¼­µå
-
+    #region ì”¬ ì „í™˜ ì‹œ í˜¸ì¶œí•  ë©”ì„œë“œ
     /// <summary>
-    /// ¾À ÀüÈ¯ Àü È£Ãâ - ÁÂ¼® µ¥ÀÌÅÍ ÀúÀå
+    /// ì”¬ ì „í™˜ ì „ í˜¸ì¶œ - ì¢Œì„ ë°ì´í„° ì €ì¥
     /// </summary>
     public void OnSceneChanging()
     {
         SaveSeatData();
-        SaveOrderDrink(); // ÁÖ¹® Á¤º¸µµ ÇÔ²² ÀúÀå
-        SaveCustomerState(); // °í°´ »óÅÂ Á¤º¸ ÀúÀå
+        SaveOrderDrink();
+        SaveCustomerState();
     }
 
     /// <summary>
-    /// »õ ¾À ·Îµå ÈÄ È£Ãâ - ÁÂ¼® µ¥ÀÌÅÍ º¹¿ø
+    /// ìƒˆ ì”¬ ë¡œë“œ í›„ í˜¸ì¶œ - ì¢Œì„ ë°ì´í„° ë³µì›
     /// </summary>
     public void OnSceneLoaded()
     {
         RestoreSeatData();
-        RestoreCustomerState(); // °í°´ »óÅÂ Á¤º¸ º¹¿ø
-
+        RestoreOrderDrink();
+        RestoreCustomerState();
     }
-
     #endregion
 }
+

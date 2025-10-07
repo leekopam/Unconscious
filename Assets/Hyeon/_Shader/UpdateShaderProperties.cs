@@ -1,8 +1,8 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 namespace MyProject.Shader
 {
-    [ExecuteAlways] // ExecuteInEditMode ´ë½Å ExecuteAlways »ç¿ë
+    [ExecuteAlways] // ExecuteInEditMode ëŒ€ì‹  ExecuteAlways ì‚¬ìš©
     public class UpdateShaderProperties : MonoBehaviour
     {
         private Transform cachedTransform;

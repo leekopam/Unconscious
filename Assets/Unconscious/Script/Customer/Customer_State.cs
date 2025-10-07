@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public interface ICustomerState
 {
@@ -16,16 +16,15 @@ public class SeatedState : ICustomerState
 
     public void Update(Customer customer)
     {
-        
     }
 
     public void Exit(Customer customer)
     {
         customer.animator.SetBool("SpawnState", false);
-        
     }
 }
-// ¼Õ´Ô ´ë±â »óÅÂ (»ı¼ºµÉ¶§ ¾Ö´Ï¸ŞÀÌ¼Ç »ç¿ëÇÏÁö ¾Ê°í ¹Ù·Î ÀÚ¸®¿¡ ÀÖ´Â »óÅÂ·Î À¯Áö)
+
+// ì†ë‹˜ ëŒ€ê¸° ìƒíƒœ (ìƒì„±ë ë•Œ ì• ë‹ˆë©”ì´ì…˜ ì‚¬ìš©í•˜ì§€ ì•Šê³  ë°”ë¡œ ìë¦¬ì— ìˆëŠ” ìƒíƒœë¡œ ìœ ì§€)
 public class WaitingState : ICustomerState
 {
     public void Enter(Customer customer)
@@ -34,24 +33,27 @@ public class WaitingState : ICustomerState
         {
             customer.animator.SetBool("WaitingState", true);
         }
+
         customer.SetDialogueCanvasActive(true, "...");
     }
+
     public void Update(Customer customer)
     {
-        
     }
+
     public void Exit(Customer customer)
     {
         customer.animator.SetBool("WaitingState", false);
         customer.SetDialogueCanvasActive(false, null);
     }
 }
+
 public class TasteState : ICustomerState
 {
-    string message_Correct;
-    string message_Wrong;
-    private bool hasVerified = false; // À½·á ¸Ô¾ú´ÂÁö È®ÀÎ¿©ºÎ
-    private bool isWaitingForExit = false; // °ËÁõ ¿Ï·á ÈÄ ÅğÀå ´ë±â »óÅÂ
+    private string message_Correct;
+    private string message_Wrong;
+    private bool hasVerified = false;      // ìŒë£Œ í™•ì¸ ì—¬ë¶€
+    private bool isWaitingForExit = false; // ê²€ì¦ ì™„ë£Œ í›„ í‡´ì¥ ëŒ€ê¸° ìƒíƒœ
     public int Reward_Gold = 10;
 
     public void Enter(Customer customer)
@@ -60,12 +62,17 @@ public class TasteState : ICustomerState
         {
             customer.animator.SetBool("OrderState", true);
         }
-        CustomerManager.Instance.DisableOtherButtons(customer); //´Ù¸¥ ¼Õ´Ô ¹öÆ° ºñÈ°¼ºÈ­
+
+        CustomerManager manager = Object.FindObjectOfType<CustomerManager>();
+        if (manager != null)
+        {
+            manager.DisableOtherButtons(customer); // ë‹¤ë¥¸ ì†ë‹˜ ë²„íŠ¼ ë¹„í™œì„±í™”
+        }
 
         message_Correct = customer.dialogueData.lines.onCorrectDrink;
         message_Wrong = customer.dialogueData.lines.onWrongDrink;
 
-        string message_Waiting = customer.dialogueData.lines.onTasteDrink; //´ë±â»óÅÂ ´ë»ç
+        string message_Waiting = customer.dialogueData.lines.onTasteDrink;
         customer.SetDialogueCanvasActive(true, message_Waiting);
 
         hasVerified = false;
@@ -74,7 +81,6 @@ public class TasteState : ICustomerState
 
     public void Update(Customer customer)
     {
-        
     }
 
     public void Exit(Customer customer)
@@ -83,9 +89,7 @@ public class TasteState : ICustomerState
         customer.SetDialogueCanvasActive(false, null);
     }
 
-
-    #region À½·á °ËÁõ ±â´É
-    // Å¬¸¯ ÀÌº¥Æ®¸¦ ÅëÇØ È£ÃâµÇ´Â À½·á °ËÁõ ¸Ş¼­µå
+    #region ìŒë£Œ ê²€ì¦ ê¸°ëŠ¥
     public void OnDialogueClicked(Customer customer)
     {
         if (!hasVerified)
@@ -96,7 +100,7 @@ public class TasteState : ICustomerState
         }
         else if (isWaitingForExit)
         {
-            // °ËÁõ ÈÄ ÅğÀå »óÅÂ·Î ÀüÈ¯
+            // ê²€ì¦ í›„ í‡´ì¥ ìƒíƒœë¡œ ì „í™˜
             customer.state_Exit();
             isWaitingForExit = false;
         }
@@ -104,64 +108,58 @@ public class TasteState : ICustomerState
 
     private void VerifyDrink(Customer customer, string message_Correct, string message_Wrong)
     {
-        // °í°´ÀÇ ÁÂ¼® ÀÎµ¦½º °è»ê (x ÁÂÇ¥ ±â¹İ)
-        int seatIndex = (int)customer.transform.position.x switch
+        int seatIndex = customer.GetSeatIndex();
+        if (!SeatIndex.IsValid(seatIndex))
         {
-            1 => 0,   // ¿ì¼®
-            0 => 1,   // Áß¼®
-            -1 => 2,  // ÁÂ¼®
-            _ => -1   // Àß¸øµÈ À§Ä¡
-        };
-
-        if (seatIndex == -1)
-        {
-            UnityEngine.Debug.LogError($"°í°´ {customer.gameObject.name}ÀÇ ÁÂ¼® À§Ä¡¸¦ È®ÀÎÇÒ ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogError($"[Order] ê³ ê° {customer.gameObject.name}ì˜ ì¢Œì„ ì¸ë±ìŠ¤ë¥¼ í™•ì¸í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             customer.SetDialogueCanvasActive(true, message_Wrong);
             return;
         }
 
-        // CustomerData¿¡¼­ ÁÖ¹®ÇÑ À½·á °¡Á®¿À±â
-        Recipe orderedDrink = CustomerData.Instance.GetOrderedDrink(seatIndex);
-
-        // CocktailData¿¡¼­ ¸¶Áö¸·À¸·Î Á¦ÀÛÇÑ À½·á °¡Á®¿À±â
-        CocktailData.CocktailInfo lastCocktail = CocktailData.Instance.GetLastCocktail();
-
-        // À½·á °ËÁõ
-        bool isCorrect = false;
-
-        if (lastCocktail != null && lastCocktail.isSuccessful)
+        if (!CustomerData.Instance.HasOrdered(seatIndex))
         {
-            isCorrect = (lastCocktail.cocktailRecipe == orderedDrink);
+            Debug.LogWarning($"[Order] ê³ ê° {customer.gameObject.name}ì˜ ì£¼ë¬¸ ë°ì´í„°ê°€ ì—†ìŠµë‹ˆë‹¤. seatIndex={seatIndex}");
+            customer.SetDialogueCanvasActive(true, message_Wrong);
+            return;
         }
 
-        // °ËÁõ °á°ú¿¡ µû¸¥ ´ë»ç Ãâ·Â
+        // CustomerDataì—ì„œ ì£¼ë¬¸í•œ ìŒë£Œ ê°€ì ¸ì˜¤ê¸°
+        Recipe orderedDrink = CustomerData.Instance.GetOrderedDrink(seatIndex);
+
+        // CocktailDataì—ì„œ ë§ˆì§€ë§‰ìœ¼ë¡œ ì œì‘í•œ ìŒë£Œ ê°€ì ¸ì˜¤ê¸°
+        CocktailData.CocktailInfo lastCocktail = CocktailData.Instance.GetLastCocktail();
+
+        bool isCorrect = lastCocktail != null
+                         && lastCocktail.isSuccessful
+                         && lastCocktail.cocktailRecipe == orderedDrink;
+
         if (isCorrect)
         {
             customer.SetDialogueCanvasActive(true, message_Correct);
-            UnityEngine.Debug.Log($"°í°´ {customer.gameObject.name}: ÁÖ¹®ÇÑ À½·á¿Í ÀÏÄ¡! ({orderedDrink})");
-            RewardData.Instance.AddGold(Reward_Gold); // °ñµå º¸»ó Ãß°¡
+            Debug.Log($"[Order] ê³ ê° {customer.gameObject.name}: ì£¼ë¬¸ê³¼ ì¼ì¹˜ ({orderedDrink})");
+            RewardData.Instance.AddGold(Reward_Gold);
+            return;
         }
-        else
-        {
-            customer.SetDialogueCanvasActive(true, message_Wrong);
-            string lastDrinkName = lastCocktail?.cocktailRecipe.ToString() ?? "¾øÀ½";
-            UnityEngine.Debug.Log($"°í°´ {customer.gameObject.name}: ÁÖ¹®ÇÑ À½·á¿Í ºÒÀÏÄ¡! ÁÖ¹®: {orderedDrink}, Á¦ÀÛ: {lastDrinkName}");
-        }
+
+        customer.SetDialogueCanvasActive(true, message_Wrong);
+        string lastDrinkName = lastCocktail?.cocktailRecipe.ToString() ?? "ì—†ìŒ";
+        Debug.Log($"[Order] ê³ ê° {customer.gameObject.name}: ì£¼ë¬¸ ë¶ˆì¼ì¹˜. ì£¼ë¬¸: {orderedDrink}, ì œì‘: {lastDrinkName}");
     }
     #endregion
-
 }
+
 public class ExitState : ICustomerState
 {
-    private bool hasExecuted = false; // ÅğÀå ·ÎÁ÷ÀÌ ÇÑ ¹ø¸¸ ½ÇÇàµÇµµ·Ï È®ÀÎÇÏ´Â º¯¼ö
+    private bool hasExecuted = false; // í‡´ì¥ ë¡œì§ì´ í•œ ë²ˆë§Œ ì‹¤í–‰ë˜ë„ë¡ í™•ì¸í•˜ëŠ” ë³€ìˆ˜
+
     public void Enter(Customer customer)
     {
         if (customer.animator != null)
         {
             customer.animator.SetBool("CustomerExit", true);
         }
+
         hasExecuted = false;
-        //customer.SetDialogueCanvasActive(true, null); //ÅğÀå ´ë»ç ÇÊ¿äÇÏ¸é »ç¿ë
     }
 
     public void Update(Customer customer)
@@ -169,7 +167,7 @@ public class ExitState : ICustomerState
         if (!hasExecuted && customer.animator != null)
         {
             AnimatorStateInfo stateInfo = customer.animator.GetCurrentAnimatorStateInfo(0);
-            if (stateInfo.IsName("Customer_Exit") && stateInfo.normalizedTime >=  0.95f)
+            if (stateInfo.IsName("Customer_Exit") && stateInfo.normalizedTime >= 0.95f)
             {
                 ExecuteLogic(customer);
                 hasExecuted = true;
@@ -184,13 +182,13 @@ public class ExitState : ICustomerState
 
     private void ExecuteLogic(Customer customer)
     {
-        CustomerManager.Instance.EndDialogue();//³ª¸ÓÁö ¼Õ´Ô Dialogue ¹öÆ° È°¼ºÈ­
+        CustomerManager.Instance.EndDialogue(); // ë‚˜ë¨¸ì§€ ì†ë‹˜ Dialogue ë²„íŠ¼ í™œì„±í™”
         Customer_Spawner spawner = Customer_Spawner.FindObjectOfType<Customer_Spawner>();
         if (spawner != null && customer.prefabIndex >= 0)
         {
             spawner.ReleasePrefabIndex(customer.prefabIndex);
 
-            // ÇØ´ç ¼Õ´ÔÀÇ ÁÂ¼® »óÅÂµµ ÃÊ±âÈ­
+            // í•´ë‹¹ ì†ë‹˜ì˜ ì¢Œì„ ìƒíƒœë„ ì´ˆê¸°í™”
             if (CustomerManager.Instance.leftCustomer == customer)
             {
                 spawner.seat_Left = false;
@@ -207,7 +205,9 @@ public class ExitState : ICustomerState
                 CustomerManager.Instance.rightCustomer = null;
             }
 
-            // º¼ÀÏ³¡³­ ¼Õ´Ô ¿ÀºêÁ§Æ® Á¦°Å
+            customer.seatIndex = SeatIndex.Unknown;
+
+            // ë³¼ì¼ ëë‚œ ì†ë‹˜ ì˜¤ë¸Œì íŠ¸ ì œê±°
             GameObject.Destroy(customer.gameObject);
         }
     }

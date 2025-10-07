@@ -1,10 +1,11 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class CustomerManager : MonoBehaviour
 {
     private static CustomerManager instance;
+
     public static CustomerManager Instance
     {
         get
@@ -18,6 +19,7 @@ public class CustomerManager : MonoBehaviour
                     instance = obj.AddComponent<CustomerManager>();
                 }
             }
+
             return instance;
         }
     }
@@ -30,68 +32,94 @@ public class CustomerManager : MonoBehaviour
     public Button seat_Middle;
     public Button seat_Right;
 
-    // ÇöÀç ´ëÈ­ ÁßÀÎ ¼Õ´ÔÀ» ÃßÀûÇÏ´Â º¯¼ö
+    // í˜„ì¬ ëŒ€í™” ì¤‘ì¸ ì†ë‹˜ì„ ì¶”ì í•˜ëŠ” ë³€ìˆ˜
     private Customer currentTalkingCustomer = null;
 
-    void Start()
+    private void Start()
     {
-        if (SceneManager.GetActiveScene().name == "Order") // Order ¾À¿¡¼­¸¸ ¹öÆ°À» Ã£µµ·Ï º¯°æ
+        if (SceneManager.GetActiveScene().name != SceneNames.Order)
         {
-            GameObject dialogueParent = GameObject.Find("Canvas/Canvas_Dialogue");
-            if (seat_Left == null) seat_Left = dialogueParent.transform.Find("seat_Left").GetComponent<Button>();
-            if (seat_Middle == null) seat_Middle = dialogueParent.transform.Find("seat_Middle").GetComponent<Button>();
-            if (seat_Right == null) seat_Right = dialogueParent.transform.Find("seat_Right").GetComponent<Button>();
-
-            seat_Left.onClick.AddListener(() => StartDialogue(leftCustomer));
-            seat_Middle.onClick.AddListener(() => StartDialogue(middleCustomer));
-            seat_Right.onClick.AddListener(() => StartDialogue(rightCustomer));
-        }
-       
-    }
-
-    #region Dialogue ¹öÆ° Á¦¾î ¹× ¼³Á¤
-    
-    /// <summary>
-    /// ´ëÈ­¸¦ ½ÃÀÛÇÏ´Â ¸Ş¼­µå. ´Ù¸¥ ¼Õ´ÔµéÀÇ ¹öÆ°À» ºñÈ°¼ºÈ­ÇÕ´Ï´Ù.
-    /// </summary>
-    /// <param name="customer">´ëÈ­¸¦ ½ÃÀÛÇÒ ¼Õ´Ô</param>
-    public void StartDialogue(Customer customer)
-    {
-        if (customer == null) return;
-
-        // ÀÌ¹Ì ´Ù¸¥ ¼Õ´ÔÀÌ ´ëÈ­ ÁßÀÌ¸é ¹«½Ã
-        if (currentTalkingCustomer != null && currentTalkingCustomer != customer) 
             return;
+        }
 
-        // ÇöÀç ´ëÈ­ ÁßÀÎ ¼Õ´Ô ¼³Á¤
-        currentTalkingCustomer = customer;
-
-        // ´Ù¸¥ ¹öÆ°µé ºñÈ°¼ºÈ­
-        DisableOtherButtons(customer);
-
-        if (customer.IsTasting())
+        GameObject dialogueParent = GameObject.Find("Canvas/Canvas_Dialogue");
+        if (dialogueParent == null)
         {
-            // CustomerÀÇ ÇöÀç »óÅÂ°¡ TasteStateÀÎÁö È®ÀÎÇÏ°í OnDialogueClicked È£Ãâ
-            var currentStateField = typeof(Customer).GetField("currentState",
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            return;
+        }
 
-            if (currentStateField != null)
+        if (seat_Left == null)
+        {
+            Transform left = dialogueParent.transform.Find("seat_Left");
+            if (left != null)
             {
-                var currentState = currentStateField.GetValue(customer);
-                if (currentState is TasteState tasteState)
-                {
-                    tasteState.OnDialogueClicked(customer);
-                    return; // VerifyDrink ½ÇÇà ÈÄ ÀÏ¹İ ´ëÈ­ ÁøÇàÇÏÁö ¾ÊÀ½
-                }
+                seat_Left = left.GetComponent<Button>();
             }
         }
 
-        // ´ëÈ­ ÁøÇà (TasteState°¡ ¾Æ´Ñ °æ¿ì¿¡¸¸)
-        customer.NextDialogue();
+        if (seat_Middle == null)
+        {
+            Transform middle = dialogueParent.transform.Find("seat_Middle");
+            if (middle != null)
+            {
+                seat_Middle = middle.GetComponent<Button>();
+            }
+        }
+
+        if (seat_Right == null)
+        {
+            Transform right = dialogueParent.transform.Find("seat_Right");
+            if (right != null)
+            {
+                seat_Right = right.GetComponent<Button>();
+            }
+        }
+
+        if (seat_Left != null)
+        {
+            seat_Left.onClick.AddListener(() => StartDialogue(leftCustomer));
+        }
+
+        if (seat_Middle != null)
+        {
+            seat_Middle.onClick.AddListener(() => StartDialogue(middleCustomer));
+        }
+
+        if (seat_Right != null)
+        {
+            seat_Right.onClick.AddListener(() => StartDialogue(rightCustomer));
+        }
+    }
+
+    #region Dialogue ë²„íŠ¼ ì œì–´ ë° ì„¤ì •
+
+    /// <summary>
+    /// ëŒ€í™”ë¥¼ ì‹œì‘í•˜ëŠ” ë©”ì„œë“œ. ë‹¤ë¥¸ ì†ë‹˜ë“¤ì˜ ë²„íŠ¼ì„ ë¹„í™œì„±í™”í•©ë‹ˆë‹¤.
+    /// </summary>
+    public void StartDialogue(Customer customer)
+    {
+        if (customer == null)
+        {
+            return;
+        }
+
+        // ì´ë¯¸ ë‹¤ë¥¸ ì†ë‹˜ì´ ëŒ€í™” ì¤‘ì´ë©´ ë¬´ì‹œ
+        if (currentTalkingCustomer != null && currentTalkingCustomer != customer)
+        {
+            return;
+        }
+
+        // í˜„ì¬ ëŒ€í™” ì¤‘ì¸ ì†ë‹˜ ì„¤ì •
+        currentTalkingCustomer = customer;
+
+        // ë‹¤ë¥¸ ë²„íŠ¼ë“¤ ë¹„í™œì„±í™”
+        DisableOtherButtons(customer);
+
+        customer.OnDialogueClicked();
     }
 
     /// <summary>
-    /// ´ëÈ­¸¦ Á¾·áÇÏ°í ¸ğµç ¹öÆ°À» ´Ù½Ã È°¼ºÈ­ÇÕ´Ï´Ù.
+    /// ëŒ€í™”ë¥¼ ì¢…ë£Œí•˜ê³  ëª¨ë“  ë²„íŠ¼ì„ ë‹¤ì‹œ í™œì„±í™”í•©ë‹ˆë‹¤.
     /// </summary>
     public void EndDialogue()
     {
@@ -100,34 +128,72 @@ public class CustomerManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Æ¯Á¤ ¼Õ´ÔÀ» Á¦¿ÜÇÑ ³ª¸ÓÁö ¹öÆ°µéÀ» ºñÈ°¼ºÈ­ÇÕ´Ï´Ù.
+    /// íŠ¹ì • ì†ë‹˜ì„ ì œì™¸í•œ ë‚˜ë¨¸ì§€ ë²„íŠ¼ë“¤ì„ ë¹„í™œì„±í™”í•©ë‹ˆë‹¤.
     /// </summary>
-    /// <param name="activeCustomer">È°¼ºÈ­ »óÅÂ¸¦ À¯ÁöÇÒ ¼Õ´Ô</param>
     public void DisableOtherButtons(Customer activeCustomer)
     {
-        if (activeCustomer != leftCustomer && leftCustomer != null)
+        if (seat_Left != null && activeCustomer != leftCustomer && leftCustomer != null)
+        {
             seat_Left.interactable = false;
-        
-        if (activeCustomer != middleCustomer && middleCustomer != null)
+        }
+
+        if (seat_Middle != null && activeCustomer != middleCustomer && middleCustomer != null)
+        {
             seat_Middle.interactable = false;
-        
-        if (activeCustomer != rightCustomer && rightCustomer != null)
+        }
+
+        if (seat_Right != null && activeCustomer != rightCustomer && rightCustomer != null)
+        {
             seat_Right.interactable = false;
+        }
     }
 
     /// <summary>
-    /// ¸ğµç ¹öÆ°À» È°¼ºÈ­ÇÕ´Ï´Ù.
+    /// ëª¨ë“  ë²„íŠ¼ì„ í™œì„±í™”í•©ë‹ˆë‹¤.
     /// </summary>
     private void EnableAllButtons()
     {
-        if (leftCustomer != null) seat_Left.interactable = true;
-        if (middleCustomer != null) seat_Middle.interactable = true;
-        if (rightCustomer != null) seat_Right.interactable = true;
+        if (seat_Left != null && leftCustomer != null)
+        {
+            seat_Left.interactable = true;
+        }
+
+        if (seat_Middle != null && middleCustomer != null)
+        {
+            seat_Middle.interactable = true;
+        }
+
+        if (seat_Right != null && rightCustomer != null)
+        {
+            seat_Right.interactable = true;
+        }
     }
 
-    public void Set_LeftCustomer(Customer customer) { leftCustomer = customer.GetComponent<Customer>(); }
-    public void Set_MiddleCustomer(Customer customer) { middleCustomer = customer.GetComponent<Customer>(); }
-        
-    public void Set_RightCustomer(Customer customer) { rightCustomer = customer.GetComponent<Customer>(); }
+    public void Set_LeftCustomer(Customer customer)
+    {
+        leftCustomer = customer != null ? customer.GetComponent<Customer>() : null;
+        if (leftCustomer != null)
+        {
+            leftCustomer.seatIndex = SeatIndex.Left;
+        }
+    }
+
+    public void Set_MiddleCustomer(Customer customer)
+    {
+        middleCustomer = customer != null ? customer.GetComponent<Customer>() : null;
+        if (middleCustomer != null)
+        {
+            middleCustomer.seatIndex = SeatIndex.Middle;
+        }
+    }
+
+    public void Set_RightCustomer(Customer customer)
+    {
+        rightCustomer = customer != null ? customer.GetComponent<Customer>() : null;
+        if (rightCustomer != null)
+        {
+            rightCustomer.seatIndex = SeatIndex.Right;
+        }
+    }
     #endregion
 }
