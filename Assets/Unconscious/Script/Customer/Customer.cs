@@ -102,6 +102,7 @@ public class Customer : MonoBehaviour
             && dialogueIndex < dialogueData.lines.FirstLine.Count)
         {
             string message = dialogueData.lines.FirstLine[dialogueIndex];
+            message = InsertOrderDialogueText(message);
             SetDialogueCanvasActive(true, message);
             dialogueIndex++;// 다음 대사로 인덱스 증가
         }
@@ -118,6 +119,7 @@ public class Customer : MonoBehaviour
             }
         }
     }
+
     // 주문한 손님을 제외한 나머지 손님들을 Waiting 상태로 전환
     private void SetOtherCustomersToWaiting()
     {
@@ -140,9 +142,23 @@ public class Customer : MonoBehaviour
             manager.rightCustomer.state_Waiting();
         }
     }
+
+    // 대사에 주문한 음료 이름 삽입
+    private string InsertOrderDialogueText(string text)
+    {
+        if (string.IsNullOrEmpty(text)) return text;
+
+        // {order}로 호출된 부분을 실제 주문 이름으로 치환
+        if (dialogueData != null && dialogueData.lines != null)
+        {
+            string orderName = dialogueData.lines.onOrder.ToString();
+            text = text.Replace("{order}", orderName);
+        }
+        return text;
+    }
     #endregion
     #region 주문기능
-private void RandDrinkOrder()
+    private void RandDrinkOrder()
 {
     // dialogueData가 있으면 매번 새로운 랜덤 레시피 할당
     if (dialogueData != null && dialogueData.lines != null)
