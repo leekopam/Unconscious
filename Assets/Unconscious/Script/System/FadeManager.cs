@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
@@ -44,7 +44,7 @@ public class FadeManager : MonoBehaviour
 
     private IEnumerator FadeSequence(string sceneName)
     {
-        // ÆäÀÌµå ¾Æ¿ô
+        // í˜ì´ë“œ ì•„ì›ƒ
         float elapsedTime = 0f;
         while (elapsedTime < fadeTime)
         {

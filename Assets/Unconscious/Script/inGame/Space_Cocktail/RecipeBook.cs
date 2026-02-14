@@ -1,94 +1,140 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public enum Recipe
 {
-    ¿¬È«³²ÀÚ,
-    ±×¸°³ª·¡,
-    °æ¼º,
-    ÇÑ¾çÀÇÀÏÃâ,
-    ¸í°æÁö¼ö,
-    ³ì»ö¿äÁ¤,
-    ½ÇÆĞÀ½·á,
-    ÁÖ¹®¾øÀ½
+    ì—°í™ë‚¨ì,
+    ê·¸ë¦°ë‚˜ë˜,
+    ê²½ì„±,
+    í•œì–‘ì˜ì¼ì¶œ,
+    ëª…ê²½ì§€ìˆ˜,
+    ë…¹ìƒ‰ìš”ì •,
+    ì‹¤íŒ¨ìŒë£Œ,
+    ì£¼ë¬¸ì—†ìŒ
 }
 
 public enum MixState
 {
-    Shake, //Èçµé±â
-    Stir, //Á£±â
-    Layer //½×±â
+    Shake, // í”ë“¤ê¸°
+    Stir,  // ì “ê¸°
+    Layer  // ìŒ“ê¸°
 }
 
-public class RecipeBook : MonoBehaviour
+public static class RecipeBook
 {
-    // ÁÖ¹® °¡´ÉÇÑ ·£´ı ·¹½ÃÇÇ¸¦ ¹İÈ¯ÇÏ´Â ¸Ş¼­µå
-    public static Recipe GetRandomOrderableRecipe()
+    private sealed class RecipeDefinition
     {
-        // Recipe enumÀÇ ¸ğµç °ªÀ» °¡Á®¿È
-        Recipe[] allRecipes = (Recipe[])System.Enum.GetValues(typeof(Recipe));
+        public IngredientId ingredientA;
+        public IngredientId ingredientB;
+        public MixState mixState;
+        public Recipe recipe;
 
-        // ½ÇÆĞÀ½·á¿Í ÁÖ¹®¾øÀ½À» Á¦¿ÜÇÑ ·¹½ÃÇÇ¸¸ ÇÊÅÍ¸µ
-        List<Recipe> orderableRecipes = allRecipes
-            .Where(r => r != Recipe.½ÇÆĞÀ½·á && r != Recipe.ÁÖ¹®¾øÀ½)
-            .ToList();
-
-        // ·¹½ÃÇÇ Áß ·£´ı ¼±ÅÃ
-        if (orderableRecipes.Count > 0)
+        public bool IsMatch(IngredientId first, IngredientId second, MixState inputMixState)
         {
-            int randomIndex = Random.Range(0, orderableRecipes.Count);
-            return orderableRecipes[randomIndex];
-        }
+            if (mixState != inputMixState)
+            {
+                return false;
+            }
 
-        return Recipe.ÁÖ¹®¾øÀ½;
+            return (ingredientA == first && ingredientB == second)
+                   || (ingredientA == second && ingredientB == first);
+        }
     }
 
-    // µÎ Àç·áÀÇ Æ¯¼ºÀ» ¹Ş¾Æ¼­ ÇØ´çÇÏ´Â Ä¬Å×ÀÏ ·¹½ÃÇÇ¸¦ ¹İÈ¯ÇÏ´Â ¸Ş¼­µå
-    public Recipe? Check_Cocktail_Recipe(
-        string name1, int alcoholContent1, int sweetness1, int bitterness1, FlavorType flavorType1, int flavorIntensity1,
-        string name2, int alcoholContent2, int sweetness2, int bitterness2, FlavorType flavorType2, int flavorIntensity2
-        ,MixState mixstate)
+    private static readonly List<RecipeDefinition> recipeDefinitions = new List<RecipeDefinition>
     {
-        // ¿¬È«³²ÀÚ = µµÈ­ÁÖ + ³ª¸° ÀÌÈ­ÁÖ
-        if ((mixstate==MixState.Shake&&
-            name1 == "µµÈ­ÁÖ" && name2 == "³ª¸° ÀÌÈ­ÁÖ") || (name1 == "³ª¸° ÀÌÈ­ÁÖ" && name2 == "µµÈ­ÁÖ"))
+        new RecipeDefinition
         {
-            return Recipe.¿¬È«³²ÀÚ;
-        }
-        // ±×¸°³ª·¡ = °¡ÇâÁÖ + ¼Ò½½¹Ù¶÷
-        if (mixstate == MixState.Stir && 
-            (name1 == "°¡ÇâÁÖ" && name2 == "¼Ò½½¹Ù¶÷") || (name1 == "¼Ò½½¹Ù¶÷" && name2 == "°¡ÇâÁÖ"))
+            ingredientA = IngredientId.PeachWine,
+            ingredientB = IngredientId.NarinIhwaju,
+            mixState = MixState.Shake,
+            recipe = Recipe.ì—°í™ë‚¨ì
+        },
+        new RecipeDefinition
         {
-            return Recipe.±×¸°³ª·¡;
-        }
-        //°æ¼º = ³ª¸° ÀÌÈ­ÁÖ + È£Á¢Áö¸ù
-        if ((mixstate == MixState.Layer && 
-            name1 == "³ª¸° ÀÌÈ­ÁÖ" && name2 == " È£Á¢Áö¸ù") || (name1 == " È£Á¢Áö¸ù" && name2 == "³ª¸° ÀÌÈ­ÁÖ"))
+            ingredientA = IngredientId.Gahyangju,
+            ingredientB = IngredientId.Soseulbaram,
+            mixState = MixState.Stir,
+            recipe = Recipe.ê·¸ë¦°ë‚˜ë˜
+        },
+        new RecipeDefinition
         {
-            return Recipe.°æ¼º;
-        }
-        //ÇÑ¾çÀÇ_ÀÏÃâ = ¼Ò½½¹Ù¶÷ + µ¿Áş´Ş
-        if ((mixstate == MixState.Shake && 
-            name1 == "¼Ò½½¹Ù¶÷" && name2 == "µ¿Áş´Ş") || (name1 == "µ¿Áş´Ş" && name2 == "¼Ò½½¹Ù¶÷"))
+            ingredientA = IngredientId.NarinIhwaju,
+            ingredientB = IngredientId.Hojeopjimong,
+            mixState = MixState.Layer,
+            recipe = Recipe.ê²½ì„±
+        },
+        new RecipeDefinition
         {
-            return Recipe.ÇÑ¾çÀÇÀÏÃâ;
-        }
-        //¸í°æÁö¼ö = µµÈ­ÁÖ + µ¿Áş´Ş
-        if ((mixstate == MixState.Stir && 
-            name1 == "µµÈ­ÁÖ" && name2 == "µ¿Áş´Ş") || (name1 == "µ¿Áş´Ş" && name2 == "µµÈ­ÁÖ"))
+            ingredientA = IngredientId.Soseulbaram,
+            ingredientB = IngredientId.Dongjitdal,
+            mixState = MixState.Shake,
+            recipe = Recipe.í•œì–‘ì˜ì¼ì¶œ
+        },
+        new RecipeDefinition
         {
-            return Recipe.¸í°æÁö¼ö;
-        }
-        //³ì»ö_¿äÁ¤ = °¡ÇâÁÖ + È£Á¢Áö¸ù
-        if ((mixstate == MixState.Layer && 
-            name1 == "°¡ÇâÁÖ" && name2 == "È£Á¢Áö¸ù") || (name1 == "È£Á¢Áö¸ù" && name2 == "°¡ÇâÁÖ"))
+            ingredientA = IngredientId.PeachWine,
+            ingredientB = IngredientId.Dongjitdal,
+            mixState = MixState.Stir,
+            recipe = Recipe.ëª…ê²½ì§€ìˆ˜
+        },
+        new RecipeDefinition
         {
-            return Recipe.³ì»ö¿äÁ¤;
+            ingredientA = IngredientId.Gahyangju,
+            ingredientB = IngredientId.Hojeopjimong,
+            mixState = MixState.Layer,
+            recipe = Recipe.ë…¹ìƒ‰ìš”ì •
         }
-        else
+    };
+
+    // ì£¼ë¬¸ ê°€ëŠ¥í•œ ëœë¤ ë ˆì‹œí”¼ë¥¼ ë°˜í™˜í•˜ëŠ” ë©”ì„œë“œ
+    public static Recipe GetRandomOrderableRecipe()
+    {
+        Recipe[] allRecipes = (Recipe[])System.Enum.GetValues(typeof(Recipe));
+        List<Recipe> orderableRecipes = allRecipes.Where(IsOrderableRecipe).ToList();
+
+        if (orderableRecipes.Count <= 0)
         {
-            return Recipe.½ÇÆĞÀ½·á; // ÇØ´çÇÏ´Â ·¹½ÃÇÇ°¡ ¾øÀ» °æ¿ì null ¹İÈ¯
+            return Recipe.ì£¼ë¬¸ì—†ìŒ;
         }
+
+        int randomIndex = Random.Range(0, orderableRecipes.Count);
+        return orderableRecipes[randomIndex];
+    }
+
+    public static bool IsOrderableRecipe(Recipe recipe)
+    {
+        return recipe != Recipe.ì‹¤íŒ¨ìŒë£Œ && recipe != Recipe.ì£¼ë¬¸ì—†ìŒ;
+    }
+
+    public static Recipe CheckCocktailRecipe(IngredientId ingredient1, IngredientId ingredient2, MixState mixState)
+    {
+        if (ingredient1 == IngredientId.Unknown || ingredient2 == IngredientId.Unknown)
+        {
+            return Recipe.ì‹¤íŒ¨ìŒë£Œ;
+        }
+
+        foreach (RecipeDefinition definition in recipeDefinitions)
+        {
+            if (definition.IsMatch(ingredient1, ingredient2, mixState))
+            {
+                return definition.recipe;
+            }
+        }
+
+        return Recipe.ì‹¤íŒ¨ìŒë£Œ;
+    }
+
+    // ê¸°ì¡´ í˜¸ì¶œë¶€ì™€ì˜ í˜¸í™˜ì„ ìœ„í•œ ë˜í¼ ë©”ì„œë“œ
+    public static Recipe Check_Cocktail_Recipe(
+        string name1, int alcoholContent1, int sweetness1, int bitterness1, FlavorType flavorType1, int flavorIntensity1,
+        string name2, int alcoholContent2, int sweetness2, int bitterness2, FlavorType flavorType2, int flavorIntensity2,
+        MixState mixstate)
+    {
+        IngredientId ingredientId1 = IngredientNameMapper.ToIngredientId(name1);
+        IngredientId ingredientId2 = IngredientNameMapper.ToIngredientId(name2);
+
+        return CheckCocktailRecipe(ingredientId1, ingredientId2, mixstate);
     }
 }

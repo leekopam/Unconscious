@@ -1,4 +1,4 @@
-using DG.Tweening;
+ï»¿using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,12 +9,12 @@ public class DessertSelecter : MonoBehaviour
     [SerializeField] private Button leftButton;
     [SerializeField] private Button rightButton;
 
-    private int currentIndex = 1; // ÃÊ±â Áß¾Ó ÀÎµ¦½º
-    [SerializeField] private float imageMovementDistance = 150f; // ÀÌ¹ÌÁö ÀÌµ¿ °Å¸®
-    [SerializeField] private float animationDuration = 0.5f; // ¾Ö´Ï¸ŞÀÌ¼Ç Áö¼Ó ½Ã°£
+    private int currentIndex = 1; // ì´ˆê¸° ì¤‘ì•™ ì¸ë±ìŠ¤
+    [SerializeField] private float imageMovementDistance = 150f; // ì´ë¯¸ì§€ ì´ë™ ê±°ë¦¬
+    [SerializeField] private float animationDuration = 0.5f; // ì• ë‹ˆë©”ì´ì…˜ ì§€ì† ì‹œê°„
     [SerializeField] private float selectImgScale = 1.5f;
     [SerializeField] private float normalImgScale = 1.0f;
-    [SerializeField] private float imageSpacing = 50f; // ÀÌ¹ÌÁö °£ °£°İ
+    [SerializeField] private float imageSpacing = 50f; // ì´ë¯¸ì§€ ê°„ ê°„ê²©
 
     private void Start()
     {
@@ -26,14 +26,14 @@ public class DessertSelecter : MonoBehaviour
     {
         for (int i = 0; i < carouselImages.Length; i++)
         {
-            // ÀÌ¹ÌÁö À§Ä¡ ¹× Å©±â Á¶Á¤
+            // ì´ë¯¸ì§€ ìœ„ì¹˜ ë° í¬ê¸° ì¡°ì •
             float xPosition = CalculateImagePosition(i);
             carouselImages[i].rectTransform.anchoredPosition = new Vector2(
                 xPosition,
                 carouselImages[i].rectTransform.anchoredPosition.y
             );
 
-            // ÀÌ¹ÌÁö ¼±ÅÃ »óÅÂ¿¡ µû¸¥ Ã³¸®
+            // ì´ë¯¸ì§€ ì„ íƒ ìƒíƒœì— ë”°ë¥¸ ì²˜ë¦¬
             if (i == currentIndex)
             {
                 carouselImages[i].gameObject.SetActive(true);
@@ -51,7 +51,7 @@ public class DessertSelecter : MonoBehaviour
 
     private float CalculateImagePosition(int index)
     {
-        // ÀÌ¹ÌÁö À§Ä¡ °è»ê ¸Ş¼­µå
+        // ì´ë¯¸ì§€ ìœ„ì¹˜ ê³„ì‚° ë©”ì„œë“œ
         return (index - currentIndex) * (imageMovementDistance + imageSpacing);
     }
 
@@ -63,7 +63,7 @@ public class DessertSelecter : MonoBehaviour
 
     private void MoveCarousel(int direction)
     {
-        // ¹üÀ§ Ã¼Å©
+        // ë²”ìœ„ ì²´í¬
         if (currentIndex + direction < 0 || currentIndex + direction >= carouselImages.Length)
             return;
 
@@ -71,13 +71,10 @@ public class DessertSelecter : MonoBehaviour
 
         for (int i = 0; i < carouselImages.Length; i++)
         {
-            // ÀÌ¹ÌÁö À§Ä¡ ¾Ö´Ï¸ŞÀÌ¼Ç
-            carouselImages[i].rectTransform.DOAnchorPosX(
-                CalculateImagePosition(i),
-                animationDuration
-            );
+            // ì´ë¯¸ì§€ ìœ„ì¹˜ ì• ë‹ˆë©”ì´ì…˜
+            AnimateAnchoredPosX(carouselImages[i].rectTransform, CalculateImagePosition(i), animationDuration);
 
-            // ÀÌ¹ÌÁö È°¼ºÈ­/ºñÈ°¼ºÈ­ ¹× Å©±â Á¶Á¤
+            // ì´ë¯¸ì§€ í™œì„±í™”/ë¹„í™œì„±í™” ë° í¬ê¸° ì¡°ì •
             if (i == currentIndex)
             {
                 carouselImages[i].gameObject.SetActive(true);
@@ -91,6 +88,24 @@ public class DessertSelecter : MonoBehaviour
                 ToggleRelatedObject(i, false);
             }
         }
+    }
+
+    private void AnimateAnchoredPosX(RectTransform rectTransform, float targetX, float duration)
+    {
+        if (rectTransform == null)
+        {
+            return;
+        }
+
+        Vector2 current = rectTransform.anchoredPosition;
+        Vector2 target = new Vector2(targetX, current.y);
+
+        DOTween.To(
+            () => rectTransform.anchoredPosition,
+            value => rectTransform.anchoredPosition = value,
+            target,
+            duration
+        );
     }
 
     private void ScaleImage(Image image, Vector3 scale)

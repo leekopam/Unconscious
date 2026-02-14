@@ -2,14 +2,20 @@ using UnityEngine;
 
 public class ShakeTechnic : MonoBehaviour
 {
-    private MakeCocktail makecocktail;
+    private MakeCocktail makeCocktail;
 
     private void Start()
     {
-        makecocktail = FindObjectOfType<MakeCocktail>();
+        makeCocktail = FindObjectOfType<MakeCocktail>();
     }
+
     private void OnMouseDown()
     {
-        makecocktail.SetMixStateShake();
+        if (makeCocktail == null)
+        {
+            return;
+        }
+
+        makeCocktail.SetMixStateShake();
     }
 }

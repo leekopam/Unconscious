@@ -1,9 +1,17 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.SceneManagement;
+
+public static class SceneNames
+{
+    public const string Order = "Order";
+    public const string Cocktail = "Cocktail";
+    public const string Dessert = "Dessert";
+}
 
 public class Game_Manager : MonoBehaviour
 {
-    static Game_Manager instance;
+    private static Game_Manager instance;
+
     public static Game_Manager Instance
     {
         get
@@ -18,6 +26,7 @@ public class Game_Manager : MonoBehaviour
                     DontDestroyOnLoad(obj);
                 }
             }
+
             return instance;
         }
     }
@@ -28,8 +37,8 @@ public class Game_Manager : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
-            
-            // ¾À ·Îµå ÀÌº¥Æ® µî·Ï
+
+            // ì”¬ ë¡œë“œ ì´ë²¤íŠ¸ ë“±ë¡
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
         else if (instance != this)
@@ -40,36 +49,40 @@ public class Game_Manager : MonoBehaviour
 
     private void OnDestroy()
     {
-        // ÀÌº¥Æ® ÇØÁ¦
+        // ì´ë²¤íŠ¸ í•´ì œ
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     /// <summary>
-    /// ¾ÀÀÌ ·ÎµåµÈ ÈÄ È£ÃâµÇ´Â Äİ¹é
+    /// ì”¬ì´ ë¡œë“œëœ í›„ í˜¸ì¶œë˜ëŠ” ì½œë°±
     /// </summary>
-    /// <param name="scene">·ÎµåµÈ ¾À</param>
-    /// <param name="mode">·Îµå ¸ğµå</param>
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // CustomerData º¹¿ø
-        if (CustomerData.Instance != null)
+        CustomerData customerData = FindObjectOfType<CustomerData>();
+        if (customerData != null)
         {
-            CustomerData.Instance.OnSceneLoaded();
+            customerData.OnSceneLoaded();
         }
     }
 
     /// <summary>
-    /// ¾À ÀüÈ¯ ¸Ş¼­µå (°í°´ µ¥ÀÌÅÍ ÀúÀå Æ÷ÇÔ)
+    /// ì”¬ ì „í™˜ ë©”ì„œë“œ (ê³ ê° ë°ì´í„° ì €ì¥ í¬í•¨)
     /// </summary>
-    /// <param name="sceneName">ÀüÈ¯ÇÒ ¾À ÀÌ¸§</param>
-    public void ChangeSecene(string sceneName)
+    public void ChangeScene(string sceneName)
     {
-        // ¾À ÀüÈ¯ Àü °í°´ µ¥ÀÌÅÍ ÀúÀå
-        if (CustomerData.Instance != null)
+        CustomerData customerData = FindObjectOfType<CustomerData>();
+        if (customerData != null)
         {
-            CustomerData.Instance.OnSceneChanging();
+            customerData.OnSceneChanging();
         }
-        
+
         SceneManager.LoadScene(sceneName);
     }
+
+    // ê¸°ì¡´ ì˜¤íƒˆì ë©”ì„œë“œì™€ì˜ í˜¸í™˜
+    public void ChangeSecene(string sceneName)
+    {
+        ChangeScene(sceneName);
+    }
 }
+

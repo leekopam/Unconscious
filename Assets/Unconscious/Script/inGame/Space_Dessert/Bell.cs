@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
 
@@ -11,17 +11,16 @@ public class Bell : MonoBehaviour
     {
         playableDirector = GetComponent<PlayableDirector>();
 
-        // PlayableDirector°¡ ÀÚµ¿À¸·Î Àç»ıµÇÁö ¾Êµµ·Ï ¼³Á¤
+        // PlayableDirectorê°€ ìë™ìœ¼ë¡œ ì¬ìƒë˜ì§€ ì•Šë„ë¡ ì„¤ì •
         if (playableDirector != null)
         {
-            playableDirector.playOnAwake = false; // ÀÚµ¿ Àç»ı ºñÈ°¼ºÈ­
+            playableDirector.playOnAwake = false;
             playableDirector.stopped += OnPlayableDirectorStopped;
         }
     }
 
     private void OnDestroy()
     {
-        // ¾Ö´Ï¸ŞÀÌ¼Ç ¿Ï·á ÀÌº¥Æ® ¸®½º³Ê Á¦°Å
         if (playableDirector != null)
         {
             playableDirector.stopped -= OnPlayableDirectorStopped;
@@ -29,20 +28,23 @@ public class Bell : MonoBehaviour
     }
 
     /// <summary>
-    /// PlayableDirector°¡ ¸ØÃèÀ» ¶§ È£Ãâ
+    /// PlayableDirectorê°€ ë©ˆì·„ì„ ë•Œ í˜¸ì¶œ
     /// </summary>
     private void OnPlayableDirectorStopped(PlayableDirector director)
     {
-        // ¾À ÀüÈ¯ Á¤º¸ ÀúÀå
-        PlayerPrefs.SetString("LastScene", "Dessert");
-        PlayerPrefs.Save();
+        if (Game_Manager.Instance != null)
+        {
+            Game_Manager.Instance.ChangeScene(SceneNames.Order);
+        }
+        else
+        {
+            SceneManager.LoadScene(SceneNames.Order);
+        }
 
-        // Order ¾ÀÀ¸·Î ÀÌµ¿
-        SceneManager.LoadScene("Order");
-        isPlay = false; // ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ¸ØÃèÀ¸¹Ç·Î isPlay¸¦ false·Î ¼³Á¤
+        isPlay = false;
     }
 
-    // ¸¶¿ì½º Å¬¸¯ÇßÀ»¶§ ¾Ö´Ï¸ŞÀÌ¼Ç Àç»ı
+    // ë§ˆìš°ìŠ¤ í´ë¦­í–ˆì„ë•Œ ì• ë‹ˆë©”ì´ì…˜ ì¬ìƒ
     private void OnMouseDown()
     {
         if (!isPlay)
@@ -53,22 +55,20 @@ public class Bell : MonoBehaviour
 
     private void PlayAnimation()
     {
-        if (playableDirector != null)
+        if (playableDirector == null)
         {
-            if (playableDirector.playableAsset != null)
-            {
-                Debug.Log("PlayableDirector°¡ Àç»ıµË´Ï´Ù.");
-                playableDirector.Play();
-                isPlay = true;
-            }
-            else
-            {
-                Debug.LogError("PlayableDirector¿¡ ¿¬°áµÈ PlayableAssetÀÌ ¾ø½À´Ï´Ù.");
-            }
+            Debug.LogError("PlayableDirectorê°€ í• ë‹¹ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
+            return;
         }
-        else
+
+        if (playableDirector.playableAsset == null)
         {
-            Debug.LogError("PlayableDirector°¡ ÇÒ´çµÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+            Debug.LogError("PlayableDirectorì— ì—°ê²°ëœ PlayableAssetì´ ì—†ìŠµë‹ˆë‹¤.");
+            return;
         }
+
+        Debug.Log("PlayableDirectorê°€ ì¬ìƒë©ë‹ˆë‹¤.");
+        playableDirector.Play();
+        isPlay = true;
     }
 }
